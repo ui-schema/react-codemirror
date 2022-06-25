@@ -63,7 +63,7 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
             schema,
             required,
         })
-    }, [onChange, onChangeFormat, storeKeys, schema, required, formatValue])
+    }, [onChange, onChangeFormat, storeKeys, schema, required, formatKey])
 
     const hideTitle = schema?.getIn(['view', 'hideTitle'])
     const readOnly = readOnlyProp || schema?.get('readOnly')
