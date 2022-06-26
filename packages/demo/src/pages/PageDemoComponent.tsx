@@ -92,7 +92,7 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
             {dark: themeMode === 'dark'},
         ),
         ...(extensions || []),
-    ], [extensions])
+    ], [extensions, themeMode])
 
     const onViewLifecycle: CodeMirrorProps['onViewLifecycle'] = React.useCallback((view) => {
         console.log('on-view-lifecycle', view)
