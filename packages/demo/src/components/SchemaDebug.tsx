@@ -1,59 +1,31 @@
 import { useUIStore } from '@ui-schema/ui-schema/UIStore'
 import React from 'react'
-import { List } from 'immutable'
-import { StoreSchemaType, useUIStoreActions } from '@ui-schema/ui-schema'
-import useTheme from '@mui/material/styles/useTheme'
-import { ImmutableEditor, themeMaterial } from 'react-immutable-editor'
-import Paper from '@mui/material/Paper'
-
-const StyledEditor: React.FC<{
-    data: any
-    onChange: any
-    getVal: any
-}> = p => {
-    const theme = useTheme()
-    return <Paper
-        square
-        variant={'outlined'}
-        style={{
-            margin: theme.spacing(2) + ' ' + theme.spacing(1),
-            padding: '0 ' + theme.spacing(1),
-        }}
-        elevation={0}>
-
-        <ImmutableEditor
-            {...p}
-            theme={{
-                ...themeMaterial,
-                type: theme.palette.mode,
-                base00: theme.palette.background.paper,
-                base0D: theme.palette.text.secondary,
-                base0B: theme.palette.text.primary,
-            }}
-        />
-    </Paper>
-}
+import { StoreSchemaType } from '@ui-schema/ui-schema'
+import { CustomCodeMirror } from './CustomCodeMirror'
+import { json } from '@codemirror/lang-json'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
 
 export const SchemaDebug: React.FC<{ schema: StoreSchemaType }> = ({schema}) => {
     const {store} = useUIStore()
-    const {onChange} = useUIStoreActions()
+    const extensions = React.useMemo(() => [
+        json(),
+    ], [])
 
     return <React.Fragment>
-        <React.Fragment>
-            <StyledEditor
-                data={store?.getValues()}
-                onChange={(keys, value) => {
-                    onChange({
-                        storeKeys: List(keys),
-                        scopes: ['value'],
-                        type: 'update',
-                        updater: () => ({value: value}),
-                        required: false,
-                    })
-                }}
-                getVal={keys => store?.getValues().getIn(keys)}
+        <Box mt={1} mb={2}>
+            <Typography variant={'caption'} component={'p'} color={'secondary'} gutterBottom>Store Values</Typography>
+            <CustomCodeMirror
+                value={JSON.stringify(store?.valuesToJS(), undefined, 4)}
+                extensions={extensions}
             />
-            <StyledEditor data={schema} onChange={() => console.log('not implemented')} getVal={keys => schema.getIn(keys)}/>
-        </React.Fragment>
+        </Box>
+        <Box mb={2}>
+            <Typography variant={'caption'} component={'p'} color={'secondary'} gutterBottom>Schema</Typography>
+            <CustomCodeMirror
+                value={JSON.stringify(schema?.toJS(), undefined, 4)}
+                extensions={extensions}
+            />
+        </Box>
     </React.Fragment>
 }
