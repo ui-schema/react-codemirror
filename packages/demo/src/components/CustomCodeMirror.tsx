@@ -3,6 +3,7 @@ import {
     lineNumbers, highlightActiveLineGutter, highlightSpecialChars,
     drawSelection, dropCursor,
     rectangularSelection, highlightActiveLine, keymap,
+    EditorView,
     // crosshairCursor,
 } from '@codemirror/view'
 import { foldGutter, indentOnInput, syntaxHighlighting, defaultHighlightStyle, bracketMatching, foldKeymap } from '@codemirror/language'
@@ -29,6 +30,7 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
 
     const extensionsAll = React.useMemo(() => [
         lineNumbers(),
+        EditorView.lineWrapping,
         highlightActiveLineGutter(),
         highlightSpecialChars(),
         history(),

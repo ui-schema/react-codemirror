@@ -15,6 +15,18 @@ CodeMirror v6 integration for React, with MUI widgets for [UI-Schema](https://gi
 - [CodeMirror](https://codemirror.net/) v6 as plain React integration: `@ui-schema/kit-codemirror` [![npm (scoped)](https://img.shields.io/npm/v/@ui-schema/kit-codemirror?style=flat-square)](https://www.npmjs.com/package/@ui-schema/kit-codemirror) [![Component Documentation](https://img.shields.io/badge/Docs-green?labelColor=0a6e8a&color=61dafb&logoColor=ffffff&style=flat-square&logo=react)](https://ui-schema.bemit.codes/docs/kit-codemirror/kit-codemirror)
 - UI-Schema Widgets for [MUI](https://mui.com): `@ui-schema/material-code` [![npm (scoped)](https://img.shields.io/npm/v/@ui-schema/material-code?style=flat-square)](https://www.npmjs.com/package/@ui-schema/material-code) [![Component Documentation](https://img.shields.io/badge/Docs-green?labelColor=1a237e&color=0d47a1&logoColor=ffffff&style=flat-square&logo=mui)](https://ui-schema.bemit.codes/docs/material-code/material-code)
 
+## Demo
+
+### Demo Kit-CodeMirror
+
+Example with CodeMirror + MUI styling - but no further `@ui-schema/` packages.
+
+*[Demo Source](https://github.com/ui-schema/demo-mui-kit-codemirror)*
+
+[![Run on CodeSandbox](https://img.shields.io/badge/run%20on%20CodeSandbox-blue?labelColor=fff&logoColor=505050&style=for-the-badge&logo=codesandbox)](https://codesandbox.io/s/github/ui-schema/demo-mui-kit-codemirror/tree/main/?autoresize=1&fontsize=12&hidenavigation=1&module=%2Fsrc%2FDemoEditor.tsx)
+
+[![Run on StackBlitz](https://img.shields.io/badge/run%20on%20StackBlitz-blue?labelColor=fff&logoColor=505050&style=for-the-badge&logo=stackblitz)](https://stackblitz.com/github/ui-schema/demo-mui-kit-codemirror?file=src%2FDemoEditor.tsx,src%2FCustomCodeMirror.tsx)
+
 ## Versions
 
 This project adheres to [semver](https://semver.org/), until `1.0.0` and beginning with `0.1.0`: all `0.x.0` releases are like MAJOR releases and all `0.0.x` like MINOR or PATCH, modules below `0.1.0` should be considered experimental.
