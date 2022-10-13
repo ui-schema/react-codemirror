@@ -30,8 +30,8 @@ export const WidgetCode: React.ComponentType<WidgetProps & WithScalarValue & Wid
         CodeBar: CustomCodeBar,
     },
 ) => {
-    const handleOnChange: CodeMirrorOnChange = React.useCallback((_editor, newValue, prevValue) => {
-        if(newValue === prevValue) {
+    const handleOnChange: CodeMirrorOnChange = React.useCallback((v, newValue) => {
+        if(!v.docChanged || typeof newValue !== 'string') {
             return
         }
         onChange({

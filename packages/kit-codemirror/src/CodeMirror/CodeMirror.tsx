@@ -9,6 +9,7 @@ export interface CodeMirrorComponentProps {
     value?: string
     extensions?: Extension[]
     classNamesContent?: string[]
+    effects?: ((editor: EditorView) => void)[]
 }
 
 export interface CodeMirrorProps extends CodeMirrorComponentProps {
@@ -29,6 +30,7 @@ export const CodeMirror: React.FC<CodeMirrorProps> = (
         value = '',
         style,
         extensions,
+        effects,
     },
 ) => {
     const containerRef = React.useRef<HTMLDivElement | null>(null)
@@ -40,11 +42,12 @@ export const CodeMirror: React.FC<CodeMirrorProps> = (
         ...(extensions || []),
     ], [extensions])
 
-    const [editor] = useCodeMirror(
+    const editor = useCodeMirror(
         containerRef,
         onChange,
         value,
         extensionsAll,
+        effects,
     )
 
     // but extensions need to receive both: Compartment and Editor (and optionally their values)

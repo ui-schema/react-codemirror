@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/kit-codemirror",
-    "version": "0.0.1",
+    "version": "0.1.0-alpha.0",
     "description": "CodeMirror v6 as React Component, with hooks and stuff - but only the necessities.",
     "homepage": "https://ui-schema.bemit.codes/docs/kit-codemirror/kit-codemirror",
     "author": {

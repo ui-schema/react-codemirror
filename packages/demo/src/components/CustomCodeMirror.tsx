@@ -11,15 +11,16 @@ import { history, defaultKeymap, historyKeymap, indentWithTab } from '@codemirro
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
 import { closeBrackets, autocompletion, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete'
 import { lintKeymap } from '@codemirror/lint'
-import { Compartment, EditorState } from '@codemirror/state'
+import { Compartment, EditorState, Extension } from '@codemirror/state'
 import { useEditorTheme } from '@ui-schema/material-code/useEditorTheme'
 import { useHighlightStyle } from '@ui-schema/material-code/useHighlightStyle'
 import { CodeMirrorComponentProps, CodeMirror, CodeMirrorProps } from '@ui-schema/kit-codemirror/CodeMirror'
+import { useExtension } from '@ui-schema/kit-codemirror/useExtension'
 
 export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
     {
         // values we want to override in this component
-        value, extensions,
+        value, extensions, effects,
         // everything else is just passed down
         ...props
     },
@@ -27,8 +28,18 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
     const {onChange} = props
     const theme = useEditorTheme(typeof onChange === 'undefined')
     const highlightStyle = useHighlightStyle()
+    const {init: initHighlightExt, effects: effectsHighlightExt} = useExtension(
+        () => syntaxHighlighting(highlightStyle || defaultHighlightStyle, {fallback: true}),
+        [highlightStyle],
+    )
+    const {init: initThemeExt, effects: effectsThemeExt} = useExtension(
+        () => theme,
+        [theme],
+    )
+    const themeCompartment = React.useRef<Compartment>(new Compartment())
+    const effectsRef = React.useRef<((editor: EditorView) => void)[]>(effects || [])
 
-    const extensionsAll = React.useMemo(() => [
+    const extensionsAll: Extension[] = React.useMemo(() => [
         lineNumbers(),
         EditorView.lineWrapping,
         highlightActiveLineGutter(),
@@ -38,8 +49,8 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
         drawSelection(),
         dropCursor(),
         EditorState.allowMultipleSelections.of(true),
+        new Compartment().of(EditorState.tabSize.of(4)),
         indentOnInput(),
-        syntaxHighlighting(highlightStyle || defaultHighlightStyle, {fallback: true}),
         bracketMatching(),
         closeBrackets(),
         autocompletion(),
@@ -47,7 +58,6 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
         // crosshairCursor(),
         highlightActiveLine(),
         highlightSelectionMatches(),
-        new Compartment().of(EditorState.tabSize.of(4)),
         keymap.of([
             ...closeBracketsKeymap,
             ...defaultKeymap,
@@ -58,9 +68,31 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
             ...lintKeymap,
             indentWithTab,
         ]),
-        theme,
+        initHighlightExt(),
+        initThemeExt(),
+        // themeCompartment.current.of(themeRef.current),// only initial theme here to not re-create extensions
         ...(extensions || []),
-    ], [highlightStyle, extensions, theme])
+    ], [extensions, initHighlightExt, initThemeExt])
+
+    React.useMemo(() => {
+        if(!effects) return
+        effectsRef.current.push(...effects)
+    }, [effects])
+    React.useMemo(() => {
+        effectsRef.current.push(
+            function updateTheme(editor) {
+                editor.dispatch({
+                    effects: themeCompartment.current.reconfigure(theme),
+                })
+            },
+        )
+    }, [theme])
+    React.useMemo(() => {
+        effectsRef.current.push(...effectsHighlightExt)
+    }, [effectsHighlightExt])
+    React.useMemo(() => {
+        effectsRef.current.push(...effectsThemeExt)
+    }, [effectsThemeExt])
 
     const onViewLifecycle: CodeMirrorProps['onViewLifecycle'] = React.useCallback((view) => {
         console.log('on-view-lifecycle', view)
@@ -70,6 +102,7 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
         value={value || ''}
         extensions={extensionsAll}
         onViewLifecycle={onViewLifecycle}
+        effects={effectsRef.current.splice(0, effectsRef.current.length)}
         {...props}
         // className={className}
     />

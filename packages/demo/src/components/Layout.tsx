@@ -4,8 +4,9 @@ import { PageHome } from '../pages/PageHome'
 import { PageDemoWidget } from '../pages/PageDemoWidget'
 import { PageDemoLangSelectable } from '../pages/PageDemoLangSelectable'
 import { PageDemoComponent } from '../pages/PageDemoComponent'
+import { Button } from '@mui/material'
 
-export const Layout: React.ComponentType<{}> = () => {
+export const Layout: React.ComponentType<{ setTheme: React.Dispatch<React.SetStateAction<'dark' | 'light'>> }> = ({setTheme}) => {
     const scrollWrapper = React.useRef<HTMLDivElement | null>(null)
 
     return <div
@@ -15,7 +16,6 @@ export const Layout: React.ComponentType<{}> = () => {
             flexDirection: 'column',
             maxHeight: '100%',
             position: 'relative',
-            color: '#ffffff',
             overflow: 'auto',
             padding: '0 12px',
         }}
@@ -26,5 +26,8 @@ export const Layout: React.ComponentType<{}> = () => {
             <Route path={'/widget'} element={<PageDemoWidget/>}/>
             <Route path={'/selectable'} element={<PageDemoLangSelectable/>}/>
         </Routes>
+        <Button size={'small'} onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
+            switch theme
+        </Button>
     </div>
 }

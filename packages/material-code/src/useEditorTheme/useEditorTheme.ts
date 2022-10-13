@@ -3,13 +3,14 @@ import { EditorView } from '@codemirror/view'
 import { Extension } from '@codemirror/state'
 import useTheme from '@mui/material/styles/useTheme'
 
-export const useEditorTheme = (readOnly?: boolean): Extension => {
+export const useEditorTheme = (readOnly?: boolean, dense?: boolean, customVariant?: string): Extension => {
     const {palette, shape, components} = useTheme()
-    const variant = components?.MuiTextField?.defaultProps?.variant || 'standard'
+    const variant = customVariant || components?.MuiTextField?.defaultProps?.variant || 'standard'
     // @ts-ignore
     const styleBorderRadius = components?.MuiOutlinedInput?.styleOverrides?.root?.borderRadius
     const borderRadiusTmp = typeof styleBorderRadius !== 'undefined' ? styleBorderRadius : shape.borderRadius
     const borderRadius = variant === 'standard' ? typeof borderRadiusTmp === 'number' ? borderRadiusTmp + 'px' : borderRadiusTmp : 0
+
     return React.useMemo(
         () =>
             EditorView.theme(
@@ -17,9 +18,14 @@ export const useEditorTheme = (readOnly?: boolean): Extension => {
                     '&': {
                         color: palette.text.primary,
                         backgroundColor: palette.background.paper,
+                        width: '100%',
                     },
                     '&.cm-editor': {
-                        outline: '1px solid ' + (variant === 'standard' ? palette.divider : 'transparent'),
+                        outline: '1px solid ' + (
+                            variant === 'standard' ?
+                                (palette.mode === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)') :
+                                'transparent'
+                        ),
                         borderRadius: borderRadius,
                     },
                     ...(variant !== 'standard' || readOnly ? {} : {
@@ -27,7 +33,7 @@ export const useEditorTheme = (readOnly?: boolean): Extension => {
                             outline: '1px solid ' + palette.text.primary,
                         },
                     }),
-                    ...(variant !== 'standard' ? {} : {
+                    ...(variant === 'standard' ? {
                         // `invalid` is a custom class used by `WidgetCode` when not valid to schema
                         '&.cm-editor.invalid': {
                             outline: '1px solid ' + palette.error.main,
@@ -39,13 +45,27 @@ export const useEditorTheme = (readOnly?: boolean): Extension => {
                         '&.cm-editor.cm-focused.invalid': {
                             outline: '2px solid ' + palette.error.main,
                         },
-                    }),
+                    } : variant === 'embed' ? {
+                        '&.cm-editor.invalid': {
+                            outline: '1px solid ' + palette.error.main,
+                        },
+                        '&.cm-editor.cm-focused': {
+                            outline: 0,
+                        },
+                        // `invalid` is a custom class used by `WidgetCode` when not valid to schema
+                        '&.cm-editor.cm-focused.invalid': {
+                            outline: '2px solid ' + palette.error.main,
+                        },
+                    } : {}),
                     '& .cm-content': {
                         caretColor: palette.text.primary,
+                        padding: dense ? 0 : '3px 0',
                     },
                     '&.cm-focused .cm-cursor': {
                         borderLeftColor: palette.text.primary,
-                        // borderLeftColor: palette.primary.main,
+                    },
+                    '&.cm-editor .cm-line': {
+                        padding: dense ? '0 2px 0 4px' : '1px 3px 1px 6px',
                     },
                     '&.cm-editor.cm-focused .cm-activeLine': {
                         backgroundColor: palette.divider,
@@ -75,6 +95,6 @@ export const useEditorTheme = (readOnly?: boolean): Extension => {
                 },
                 {dark: palette.mode === 'dark'},
             ),
-        [palette, readOnly, borderRadius, variant],
+        [palette, dense, readOnly, borderRadius, variant],
     )
 }
