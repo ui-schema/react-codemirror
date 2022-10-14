@@ -18,11 +18,13 @@ import { CodeMirrorComponentProps, CodeMirror, CodeMirrorProps } from '@ui-schem
 import { useExtension } from '@ui-schema/kit-codemirror/useExtension'
 import { MuiCodeMirrorStyleProps } from '@ui-schema/material-code'
 
-export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirrorStyleProps> = (
+export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirrorStyleProps & { minHeight?: number }> = (
     {
         // values we want to override in this component
         value, extensions, effects,
         dense, variant,
+        // custom prop by this `demo` package:
+        minHeight,
         // everything else is just passed down
         ...props
     },
@@ -82,9 +84,11 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
 
     // attach each plugin effect separately (thus only the one which changes get reconfigured)
     React.useMemo(() => {
+        if(!effectsHighlightExt) return
         effectsRef.current.push(...effectsHighlightExt)
     }, [effectsHighlightExt])
     React.useMemo(() => {
+        if(!effectsThemeExt) return
         effectsRef.current.push(...effectsThemeExt)
     }, [effectsThemeExt])
 
@@ -98,6 +102,12 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
         onViewLifecycle={onViewLifecycle}
         effects={effectsRef.current.splice(0, effectsRef.current.length)}
         {...props}
+
+        // use this to force any min height:
+        style={minHeight ? {
+            display: 'flex',
+            minHeight: minHeight,
+        } : undefined}
         // className={className}
     />
 }

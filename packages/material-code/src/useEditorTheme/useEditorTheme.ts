@@ -6,20 +6,24 @@ import { TextFieldProps } from '@mui/material'
 
 export interface EditorThemeCustomStyles {
     // for all standard texts
-    textColor?: Pick<React.CSSProperties, 'color'>
+    textColor?: React.CSSProperties['color']
     // for headlines, with fallback to `textColor`
-    headlineColor?: Pick<React.CSSProperties, 'color'>
-    backgroundColor?: Pick<React.CSSProperties, 'backgroundColor'>
-    lineHeight?: Pick<React.CSSProperties, 'lineHeight'>
-    lineHeightDense?: Pick<React.CSSProperties, 'lineHeight'>
-    selectionMatch: Pick<React.CSSProperties, 'backgroundColor'>
-    activeLineGutter: Pick<React.CSSProperties, 'backgroundColor'>
-    activeLine: Pick<React.CSSProperties, 'backgroundColor'>
-    activeSelection: Pick<React.CSSProperties, 'backgroundColor'>
+    headlineColor?: React.CSSProperties['color']
+    backgroundColor?: React.CSSProperties['backgroundColor']
+    lineHeight?: React.CSSProperties['lineHeight']
+    lineHeightDense?: React.CSSProperties['lineHeight']
+    selectionMatch: React.CSSProperties['backgroundColor']
+    activeLineGutter: React.CSSProperties['backgroundColor']
+    activeLine: React.CSSProperties['backgroundColor']
+    activeSelection: React.CSSProperties['backgroundColor']
+    // defaults to `100%`, set no width at all with `null`
+    width: React.CSSProperties['width'] | null
 }
 
 export const useEditorTheme = (
-    readOnly?: boolean, dense?: boolean, customVariant?: TextFieldProps['variant'] | 'embed',
+    readOnly?: boolean,
+    dense?: boolean,
+    customVariant?: TextFieldProps['variant'] | 'embed',
     // overwrite some colors & styles easily, must be memoized to not force reapplying theme on each render
     customStyles?: EditorThemeCustomStyles,
 ): Extension => {
@@ -35,8 +39,8 @@ export const useEditorTheme = (
             textColor: customStyles?.textColor || palette.text.primary,
             headlineColor: customStyles?.headlineColor || customStyles?.textColor || palette.text.primary,
             backgroundColor: customStyles?.backgroundColor || palette.background.paper,
-            lineHeight: dense ? customStyles?.lineHeightDense || '1.3em' : customStyles?.lineHeight || '1.42125em',
-            linePadding: dense ? '0 2px 0 4px' : '1px 3px 1px 4px',
+            lineHeight: dense ? customStyles?.lineHeightDense || '1.3em' : customStyles?.lineHeight || '1.43125em',
+            linePadding: dense ? '0 2px 0 4px' : '0px 3px 0px 4px',
             contentPadding: dense ? 0 : spacing(0.5) + ' 0',
             borderDefault: palette.mode === 'light' ? 'rgba(0, 0, 0, 0.23)' : 'rgba(255, 255, 255, 0.23)',
             borderFocused: palette.primary.main,
@@ -44,7 +48,8 @@ export const useEditorTheme = (
             selectionMatch: customStyles?.selectionMatch || '#ae38a782',
             activeLineGutter: customStyles?.activeLineGutter || palette.divider,
             activeLine: customStyles?.activeLine || palette.divider,
-            activeSelection: customStyles?.activeSelection || palette.divider,
+            activeSelection: customStyles?.activeSelection || (palette.mode === 'light' ? palette.info.light : palette.info.dark),
+            width: customStyles?.width === null ? null : typeof customStyles?.width === 'undefined' ? '100%' : customStyles?.width,
         }),
         [customStyles, dense, palette, spacing],
     )
@@ -55,7 +60,9 @@ export const useEditorTheme = (
                     '&': {
                         color: styleMap.textColor,
                         backgroundColor: styleMap.backgroundColor,
-                        width: '100%',
+                        ...(typeof styleMap.width === 'undefined' || styleMap.width === null ? {} : {
+                            width: styleMap.width,
+                        }),
                     },
                     '&.cm-editor': {
                         outline: '1px solid ' + (
@@ -100,13 +107,16 @@ export const useEditorTheme = (
                     '& .cm-content': {
                         caretColor: styleMap.textColor,
                         padding: styleMap.contentPadding,
+                        lineHeight: styleMap.lineHeight,
+                    },
+                    '& .cm-scroller': {
+                        lineHeight: styleMap.lineHeight,
                     },
                     '&.cm-focused .cm-cursor': {
                         borderLeftColor: styleMap.textColor,
                     },
                     '&.cm-editor .cm-line': {
                         padding: styleMap.linePadding,
-                        lineHeight: styleMap.lineHeight,
                     },
                     '&.cm-editor.cm-focused .cm-activeLine': {
                         backgroundColor: styleMap.activeLine,
@@ -135,7 +145,6 @@ export const useEditorTheme = (
                     },
                     '& .cm-gutters .cm-lineNumbers .cm-gutterElement': {
                         paddingLeft: spacing(1),
-                        lineHeight: styleMap.lineHeight,
                     },
                 },
                 {dark: palette.mode === 'dark'},

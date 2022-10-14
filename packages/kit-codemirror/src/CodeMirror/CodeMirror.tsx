@@ -1,7 +1,7 @@
 import React from 'react'
 import { EditorView } from '@codemirror/view'
 import { Compartment, Extension } from '@codemirror/state'
-import { CodeMirrorOnChange, useCodeMirror } from '@ui-schema/kit-codemirror/useCodeMirror'
+import { CodeMirrorOnChange, CodeMirrorOnExternalChange, CodeMirrorOnViewLifeCycle, useCodeMirror } from '@ui-schema/kit-codemirror/useCodeMirror'
 import { useEditorClasses } from '@ui-schema/kit-codemirror/useEditorClasses'
 
 export interface CodeMirrorComponentProps {
@@ -14,10 +14,8 @@ export interface CodeMirrorComponentProps {
 }
 
 export interface CodeMirrorProps extends CodeMirrorComponentProps {
-    // can be called multiple times, every time an editor is re-created, e.g. because of theming change
-    // - called when editor is created with `value`
-    // - when editor was created, will be called with `undefined` after the editor is destroyed OR on unmount
-    onViewLifecycle?: (editor: EditorView | undefined) => void
+    onViewLifecycle?: CodeMirrorOnViewLifeCycle
+    onExternalChange?: CodeMirrorOnExternalChange
     className?: string
 }
 
@@ -26,7 +24,7 @@ export const CodeMirror: React.FC<CodeMirrorProps> = (
         className,
         classNamesContent,
         onChange,
-        onViewLifecycle,
+        onViewLifecycle, onExternalChange,
         value = '',
         style,
         extensions,
@@ -43,22 +41,18 @@ export const CodeMirror: React.FC<CodeMirrorProps> = (
     ], [extensions])
 
     const editor = useCodeMirror(
-        containerRef,
         onChange,
         value,
         extensionsAll,
         effects,
+        containerRef,
+        onExternalChange,
+        onViewLifecycle,
     )
 
     // but extensions need to receive both: Compartment and Editor (and optionally their values)
     // to be able to dispatch the correct effects
     useEditorClasses(editorAttributesCompartment.current, editor, classNamesContent)
-
-    React.useEffect(() => {
-        if(!onViewLifecycle || !editor) return
-        onViewLifecycle(editor)
-        return () => onViewLifecycle(undefined)
-    }, [onViewLifecycle, editor])
 
     return <div className={className} style={style} ref={containerRef}/>
 }

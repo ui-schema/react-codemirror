@@ -145,6 +145,7 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
     }, [theme])
 
     React.useMemo(() => {
+        if(!effectsHighlightExt) return
         effectsRef.current.push(...effectsHighlightExt)
     }, [effectsHighlightExt])
 
