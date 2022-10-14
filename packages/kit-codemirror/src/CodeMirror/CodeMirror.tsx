@@ -10,6 +10,7 @@ export interface CodeMirrorComponentProps {
     extensions?: Extension[]
     classNamesContent?: string[]
     effects?: ((editor: EditorView) => void)[]
+    style?: React.CSSProperties
 }
 
 export interface CodeMirrorProps extends CodeMirrorComponentProps {
@@ -18,7 +19,6 @@ export interface CodeMirrorProps extends CodeMirrorComponentProps {
     // - when editor was created, will be called with `undefined` after the editor is destroyed OR on unmount
     onViewLifecycle?: (editor: EditorView | undefined) => void
     className?: string
-    style?: React.CSSProperties
 }
 
 export const CodeMirror: React.FC<CodeMirrorProps> = (

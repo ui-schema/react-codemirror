@@ -16,17 +16,19 @@ import { useEditorTheme } from '@ui-schema/material-code/useEditorTheme'
 import { useHighlightStyle } from '@ui-schema/material-code/useHighlightStyle'
 import { CodeMirrorComponentProps, CodeMirror, CodeMirrorProps } from '@ui-schema/kit-codemirror/CodeMirror'
 import { useExtension } from '@ui-schema/kit-codemirror/useExtension'
+import { MuiCodeMirrorStyleProps } from '@ui-schema/material-code'
 
-export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
+export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirrorStyleProps> = (
     {
         // values we want to override in this component
         value, extensions, effects,
+        dense, variant,
         // everything else is just passed down
         ...props
     },
 ) => {
     const {onChange} = props
-    const theme = useEditorTheme(typeof onChange === 'undefined')
+    const theme = useEditorTheme(typeof onChange === 'undefined', dense, variant)
     const highlightStyle = useHighlightStyle()
     const {init: initHighlightExt, effects: effectsHighlightExt} = useExtension(
         () => syntaxHighlighting(highlightStyle || defaultHighlightStyle, {fallback: true}),
@@ -36,7 +38,6 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
         () => theme,
         [theme],
     )
-    const themeCompartment = React.useRef<Compartment>(new Compartment())
     const effectsRef = React.useRef<((editor: EditorView) => void)[]>(effects || [])
 
     const extensionsAll: Extension[] = React.useMemo(() => [
@@ -70,23 +71,16 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
         ]),
         initHighlightExt(),
         initThemeExt(),
-        // themeCompartment.current.of(themeRef.current),// only initial theme here to not re-create extensions
         ...(extensions || []),
     ], [extensions, initHighlightExt, initThemeExt])
 
+    // attach parent plugin effects first
     React.useMemo(() => {
         if(!effects) return
         effectsRef.current.push(...effects)
     }, [effects])
-    React.useMemo(() => {
-        effectsRef.current.push(
-            function updateTheme(editor) {
-                editor.dispatch({
-                    effects: themeCompartment.current.reconfigure(theme),
-                })
-            },
-        )
-    }, [theme])
+
+    // attach each plugin effect separately (thus only the one which changes get reconfigured)
     React.useMemo(() => {
         effectsRef.current.push(...effectsHighlightExt)
     }, [effectsHighlightExt])

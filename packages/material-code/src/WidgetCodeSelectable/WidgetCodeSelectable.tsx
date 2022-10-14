@@ -84,6 +84,7 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
             onChange={readOnly ? undefined : handleOnChange}
             extensions={extensions}
             classNamesContent={classNamesContent}
+            dense={schema.getIn(['view', 'dense']) as boolean}
         />
 
         <ValidityHelperText errors={errors} showValidity={showValidity} schema={schema}/>

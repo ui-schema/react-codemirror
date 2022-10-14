@@ -10,10 +10,22 @@
     <!--<link rel="manifest" href="<%= htmlWebpackPlugin.options.PUBLIC_URL %>/manifest.json"/>-->
     <title>React App</title>
     <style>
-        html,
-        body {
+        body, html {
+            height: 100%;
             margin: 0;
-            box-sizing: border-box;
+            padding: 0;
+        }
+
+        #root {
+            overflow: auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column
+        }
+
+        body {
+            display: flex;
+            flex-direction: column
         }
 
         *, ::before, ::after {
