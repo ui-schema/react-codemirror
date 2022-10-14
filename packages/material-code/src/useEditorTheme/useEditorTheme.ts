@@ -146,6 +146,12 @@ export const useEditorTheme = (
                     '& .cm-gutters .cm-lineNumbers .cm-gutterElement': {
                         paddingLeft: spacing(1),
                     },
+                    '&.cm-editor .cm-foldPlaceholder': {
+                        padding: '0 ' + spacing(0.5),
+                        backgroundColor: palette.mode === 'light' ? palette.background.default : palette.background.paper,
+                        borderColor: palette.divider,
+                        color: palette.primary.main,
+                    },
                 },
                 {dark: palette.mode === 'dark'},
             ),

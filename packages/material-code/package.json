@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/material-code",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "description": "Code editor widgets using CodeMirror, with Material-UI styling for UI-Schema",
     "homepage": "https://ui-schema.bemit.codes/docs/material-code/material-code",
     "author": {
@@ -50,7 +50,7 @@
         "@codemirror/state": "^6.0.0",
         "@codemirror/view": "^6.0.0",
         "@codemirror/language": "^6.1.0",
-        "@ui-schema/kit-codemirror": "~0.1.0",
+        "@ui-schema/kit-codemirror": "~0.1.0-alpha.1",
         "@ui-schema/ds-material": "~0.4.0-alpha",
         "@ui-schema/ui-schema": "~0.4.0-alpha",
         "immutable": "^4.0.0",
@@ -63,7 +63,7 @@
         "@codemirror/state": "^6.0.0",
         "@codemirror/view": "^6.0.0",
         "@codemirror/language": "^6.1.0",
-        "@ui-schema/kit-codemirror": "~0.1.0",
+        "@ui-schema/kit-codemirror": "~0.1.0-alpha.1",
         "@ui-schema/ds-material": "~0.4.0-alpha",
         "@ui-schema/ui-schema": "~0.4.0-alpha",
         "immutable": "^4.0.0",
