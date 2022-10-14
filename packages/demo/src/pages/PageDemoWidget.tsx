@@ -72,7 +72,7 @@ const schema = createOrderedMap({
             widget: 'Code',
             format: 'css',
             maxLength: 25,
-            default: '.h1 {\n    font-size: 1rem;\n    font-weight: 700;\n    border-bottom: 1px solid #fefefe;\n}',
+            default: '.h1 {\n    font-size: 1rem;\n    font-weight: 700;\n    border-bottom: 1px solid #fefefe;\n}\n\n.h2 {\n    font-size: 1rem;\n    font-weight: 700;\n    border-bottom: 1px solid #fefefe;\n}\n\n.h3 {\n    font-size: 1rem;\n    font-weight: 700;\n    border-bottom: 1px solid #fefefe;\n}',
             view: {
                 hideTitle: true,
             },

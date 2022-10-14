@@ -1,8 +1,10 @@
-import React from 'react'
 import { EditorView } from '@codemirror/view'
 import { EditorState, Extension } from '@codemirror/state'
 import { CodeMirrorOnChange, CodeMirrorOnExternalChange } from '@ui-schema/kit-codemirror/useCodeMirror'
 
+/**
+ * changes whole doc with new text
+ */
 export const replaceWholeDoc: CodeMirrorOnExternalChange = (editor, nextValue) => {
     editor?.dispatch({
         changes: {
@@ -14,10 +16,10 @@ export const replaceWholeDoc: CodeMirrorOnExternalChange = (editor, nextValue) =
 }
 
 export const createEditorView = (
-    parent: Element,
-    lastValueRef: React.MutableRefObject<string>,
+    lastValueRef: { current: string },
     extensions?: Extension[],
-    onChangeRef?: React.MutableRefObject<CodeMirrorOnChange | undefined>,
+    onChangeRef?: { current: CodeMirrorOnChange | undefined },
+    parent?: Element,
 ) => {
     return new EditorView({
         state: EditorState.create({

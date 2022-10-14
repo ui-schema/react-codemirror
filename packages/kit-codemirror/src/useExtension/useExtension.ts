@@ -11,10 +11,10 @@ export const useExtension = (ext: () => Extension, deps?: any[]) => {
     const init = React.useCallback((): Extension => {
         hasInit.current = true
         return compartment.current.of(extRef.current())
-    }, [hasInit, compartment, extRef])
+    }, [])
 
-    const effects: ((editor: EditorView) => void)[] = React.useMemo(() => {
-        if(!hasInit.current) return []
+    const effects: ((editor: EditorView) => void)[] | undefined = React.useMemo(() => {
+        if(!hasInit.current) return undefined
         return [
             function updateExtension(editor) {
                 editor.dispatch({
@@ -23,7 +23,7 @@ export const useExtension = (ext: () => Extension, deps?: any[]) => {
             },
         ]
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasInit, extRef, ...deps || []])
+    }, deps || [])
 
     return {
         init: init,
