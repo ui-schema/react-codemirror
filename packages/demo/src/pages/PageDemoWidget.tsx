@@ -58,6 +58,15 @@ const schema = createOrderedMap({
             format: 'json',
             title: 'JSON',
         },
+        json_dense: {
+            type: 'string',
+            widget: 'Code',
+            format: 'json',
+            title: 'JSON [view dense]',
+            view: {
+                dense: true,
+            },
+        },
         no_title: {
             type: 'string',
             widget: 'Code',

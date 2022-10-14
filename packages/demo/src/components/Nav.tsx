@@ -11,7 +11,10 @@ export const Nav: React.FC<{}> = () => {
     return <Box style={{display: 'flex', flexDirection: 'column', flexShrink: 0}}>
         <MuiList>
             <ListItemButton onClick={() => navigate('/component')} selected={'/component' === location.pathname}>
-                <ListItemText primary={'Component'}/>
+                <ListItemText primary={'Component Plain'}/>
+            </ListItemButton>
+            <ListItemButton onClick={() => navigate('/component-mui')} selected={'/component-mui' === location.pathname}>
+                <ListItemText primary={'Component MUI'}/>
             </ListItemButton>
             <ListItemButton onClick={() => navigate('/widget')} selected={'/widget' === location.pathname}>
                 <ListItemText primary={'Widget'}/>

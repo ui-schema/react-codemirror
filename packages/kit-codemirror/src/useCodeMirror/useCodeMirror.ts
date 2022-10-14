@@ -1,75 +1,67 @@
 import React from 'react'
 import { EditorView, ViewUpdate } from '@codemirror/view'
-import { Compartment, EditorState, Extension } from '@codemirror/state'
+import { Compartment, Extension } from '@codemirror/state'
+import { createEditorView, replaceWholeDoc } from '@ui-schema/kit-codemirror/createEditorView'
 
-export type CodeMirrorOnChange = (editor: ViewUpdate, nextValue: string, prevValue: string) => void
+export type CodeMirrorOnChange = (view: ViewUpdate, nextValue: string | undefined, prevValue: string | undefined) => void
+
+export type CodeMirrorOnExternalChange = (editor: EditorView, nextValue: string, prevValue: string) => void
 
 export const useCodeMirror = (
     containerRef: React.MutableRefObject<HTMLDivElement | null>,
     onChange?: CodeMirrorOnChange,
+    // the latest value of the editor in the parent state
     value: string = '',
     extensions?: Extension[],
-): [EditorView | undefined, React.Dispatch<React.SetStateAction<EditorView | undefined>>] => {
+    // effects to be consumed with next `layoutEffect`
+    // use e.g. `effectsRef.current.splice(0, effectsRef.current.length)`,
+    // to pass them down and remove them - so they won't get run again on next render
+    effects?: ((editor: EditorView) => void)[],
+    // handle when `value` has changed from some other instance than this
+    onExternalChange: CodeMirrorOnExternalChange = replaceWholeDoc,
+): EditorView => {
     const lastValueRef = React.useRef<string>(value)
     const onChangeRef = React.useRef<CodeMirrorOnChange | undefined>(undefined)
-    const [editor, setEditorView] = React.useState<EditorView | undefined>(undefined)
-    const readOnlyCompartment = React.useRef<Compartment>(new Compartment())
-
     // as onChange relies on the mounting state, this can't be solved with a "normal Compartment style" extension,
     // these ref hacks should be the safest/fastest option
-    onChangeRef.current = React.useMemo(() => onChange, [onChange])
+    onChangeRef.current = onChange
 
-    React.useEffect(() => {
-        const instanceMounted = {
-            current: 0,// tripple state, 0 = pre-init, 1 = ready, 2 = destroyed
+    const readOnlyCompartment = React.useRef<Compartment>(new Compartment())
+
+    const editor: EditorView = React.useMemo(() => {
+        return createEditorView(
+            containerRef.current as Element,
+            lastValueRef,
+            [
+                ...extensions || [],
+                readOnlyCompartment.current.of(EditorView.editable.of(Boolean(onChangeRef.current))),
+            ],
+            onChangeRef,
+        )
+    }, [containerRef, lastValueRef, extensions, onChangeRef])
+
+    React.useLayoutEffect(() => {
+        if(!editor) {
+            return
         }
-        const editorViewInternal = new EditorView({
-            state: EditorState.create({
-                extensions: [
-                    ...(extensions || []),
-                    EditorView.updateListener.of((viewUpdate) => {
-                        if(instanceMounted.current === 0) {
-                            // "just mounted" / editor-is-active hack
-                            instanceMounted.current = 1
-                            return
-                        }
-                        if(instanceMounted.current !== 1) {
-                            // noop
-                            return
-                        }
-                        const next = viewUpdate.state.doc.toString()
-                        // todo: decide which position (before or after `onChange`) is safe against
-                        //       detached component-state because of parent-state-changes in `onChange`
-                        const prev = lastValueRef.current
-                        lastValueRef.current = next
-                        const onChange = onChangeRef.current
-                        if(
-                            !onChange ||
-                            // todo: why is `view.destroyed` not typed?
-                            // @ts-ignore
-                            viewUpdate.view.destroyed
-                        ) {
-                            return
-                        }
-                        onChange(viewUpdate, next, prev)
-                    }),
-                    readOnlyCompartment.current.of(EditorView.editable.of(Boolean(onChangeRef.current))),
-                ],
-                doc: lastValueRef.current,
-            }),
-            // @ts-ignore
-            parent: containerRef.current,
-        })
-        setEditorView(editorViewInternal)
+        containerRef.current?.append(editor.dom)
         return () => {
-            instanceMounted.current = 2
-            editorViewInternal?.destroy()
-            setEditorView(undefined)
+            editor?.destroy()
         }
-    }, [
-        containerRef, lastValueRef, setEditorView,
-        extensions, onChangeRef,
-    ])
+    }, [containerRef, editor])
+
+    // re-execution protection for no-effects with "splice"
+    effects = effects?.length === 0 ? undefined : effects
+    React.useLayoutEffect(() => {
+        if(effects && effects.length > 0 && !editor) {
+            console.error('received effects but editor is not ready', effects)
+            return
+        }
+        if(!effects || !editor) return
+        effects.forEach(effect => {
+            effect(editor)
+        })
+    }, [effects, editor])
 
     React.useEffect(() => {
         if(!editor) {
@@ -80,28 +72,24 @@ export const useCodeMirror = (
         })
     }, [editor, onChange])
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         // changing whole doc when value changed - and change was not the last one from within CodeMirror
-        if(containerRef.current && lastValueRef.current !== value) {
-            setEditorView(editor => {
-                if(lastValueRef.current === value) {
-                    // be sure that it still isn't the same value to not unnecessarily dispatch a re-draw
-                    return editor
-                }
-                editor?.dispatch({
-                    changes: {
-                        from: 0,
-                        to: editor?.state.doc.length,
-                        insert: value,
-                    },
-                })
-                lastValueRef.current = value
-                return editor
-            })
+        if(editor && containerRef.current && lastValueRef.current !== value) {
+            if(lastValueRef.current === value) {
+                // be sure that it still isn't the same value to not unnecessarily dispatch a re-draw
+                return
+            }
+            // todo: really rely on `state.doc`?
+            //       as `lastValueRef.current` may be updated before `editor` has finished consuming the last change,
+            //       building a diff with that "actual-latest" value will produce invalid `changes.from/to` ranges.
+            const textA = editor.state.doc.toString()// lastValueRef.current
+            const textB = value
+            onExternalChange(editor, textB, textA)
+            lastValueRef.current = textB
         } else {
             lastValueRef.current = value
         }
-    }, [containerRef, value, setEditorView])
+    }, [containerRef, value, editor, onExternalChange])
 
-    return [editor, setEditorView]
+    return editor
 }

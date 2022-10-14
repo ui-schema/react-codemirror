@@ -7,10 +7,6 @@ export const useHighlightStyle = (): HighlightStyle => {
     const {palette} = useTheme()
     return React.useMemo(() => HighlightStyle.define([
         {
-            tag: tags.meta,
-            color: '#7a757a',
-        },
-        {
             tag: tags.link,
             textDecoration: 'underline',
         },
@@ -18,6 +14,10 @@ export const useHighlightStyle = (): HighlightStyle => {
             tag: tags.heading,
             textDecoration: 'underline',
             fontWeight: 'bold',
+        },
+        {
+            tag: tags.meta,
+            color: palette.mode === 'dark' ? '#43978b' : '#2a719b',
         },
         {
             tag: tags.emphasis,
@@ -33,11 +33,11 @@ export const useHighlightStyle = (): HighlightStyle => {
         },
         {
             tag: tags.keyword,
-            color: '#770088',
+            color: palette.mode === 'dark' ? '#f746ec' : '#8e0b99',
         },
         {
             tag: [tags.atom, tags.bool, tags.url, tags.contentSeparator, tags.labelName],
-            color: palette.mode === 'dark' ? '#7f72d7' : '#221199',
+            color: palette.mode === 'dark' ? '#978ed3' : '#121cb1',
         },
         {
             tag: [tags.literal, tags.inserted],
@@ -50,16 +50,14 @@ export const useHighlightStyle = (): HighlightStyle => {
         {
             tag: [tags.brace],
             color: palette.text.secondary,
-            // color: palette.mode === 'dark' ? '#ea66b1' : '#b02c77',
         },
         {
             tag: [tags.bracket],
-            color: palette.text.secondary,
-            // color: palette.mode === 'dark' ? '#ea66b1' : '#b02c77',
+            color: palette.mode === 'dark' ? '#4b88d7' : '#0d64d5',
         },
         {
             tag: [tags.string],
-            color: palette.mode === 'dark' ? '#ea66b1' : '#b02c77',
+            color: palette.mode === 'dark' ? '#83ca69' : '#08822c',
         },
         {
             tag: [tags.regexp, tags.escape, tags.special(tags.string)],
@@ -67,7 +65,7 @@ export const useHighlightStyle = (): HighlightStyle => {
         },
         {
             tag: tags.definition(tags.variableName),
-            color: '#0000ff',
+            color: palette.mode === 'dark' ? '#5279ec' : '#255fb9',
         },
         {
             tag: tags.local(tags.variableName),
@@ -75,7 +73,7 @@ export const useHighlightStyle = (): HighlightStyle => {
         },
         {
             tag: [tags.typeName, tags.namespace],
-            color: '#008855',
+            color: palette.mode === 'dark' ? '#ec4837' : '#b7382b',
         },
         {
             tag: tags.className,
@@ -91,7 +89,7 @@ export const useHighlightStyle = (): HighlightStyle => {
         },
         {
             tag: tags.comment,
-            color: '#994400',
+            color: palette.mode === 'dark' ? '#738284' : '#6b7677',
         },
         {
             tag: tags.invalid,

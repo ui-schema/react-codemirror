@@ -12,7 +12,7 @@ import { customWidgets } from './components/UISchema'
 const customThemes = customTheme('#05aeca')
 
 export const App: React.ComponentType<{}> = () => {
-    const [themeId] = React.useState<'dark' | 'light'>('dark')
+    const [themeId, setThemeId] = React.useState<'dark' | 'light'>('dark')
 
     const [theme, setTheme] = React.useState(customThemes[themeId])
     React.useEffect(() => {
@@ -26,7 +26,7 @@ export const App: React.ComponentType<{}> = () => {
             <BrowserRouter>
                 <React.Suspense fallback={<CircularProgress/>}>
                     <UIMetaProvider t={browserT} widgets={customWidgets}>
-                        <Layout/>
+                        <Layout setTheme={setThemeId}/>
                     </UIMetaProvider>
                 </React.Suspense>
             </BrowserRouter>

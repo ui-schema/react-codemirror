@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
 import { Nav } from '../components/Nav'
-import { CodeMirrorOnChange } from '@ui-schema/kit-codemirror'
+import { CodeMirrorOnChange } from '@ui-schema/kit-codemirror/useCodeMirror'
 import { CodeMirrorComponentProps, CodeMirror, CodeMirrorProps } from '@ui-schema/kit-codemirror/CodeMirror'
 import {
     lineNumbers, highlightActiveLineGutter, highlightSpecialChars,
@@ -110,10 +110,11 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
 const DemoComponent = () => {
     const [value, setValue] = React.useState('')
 
-    const onChange: CodeMirrorOnChange = React.useCallback((_editor, nextValue, prevValue) => {
-        if(nextValue !== prevValue) {
-            setValue(nextValue)
+    const onChange: CodeMirrorOnChange = React.useCallback((editor, newValue) => {
+        if(!editor.docChanged || typeof newValue !== 'string') {
+            return
         }
+        setValue(newValue)
     }, [setValue])
 
     return <React.Fragment>
@@ -128,10 +129,11 @@ const DemoComponentReadOnly = () => {
     const [readOnly, setReadOnly] = React.useState(false)
     const [value, setValue] = React.useState('')
 
-    const onChange: CodeMirrorOnChange = React.useCallback((_editor, nextValue, prevValue) => {
-        if(nextValue !== prevValue) {
-            setValue(nextValue)
+    const onChange: CodeMirrorOnChange = React.useCallback((editor, newValue) => {
+        if(!editor.docChanged || typeof newValue !== 'string') {
+            return
         }
+        setValue(newValue)
     }, [setValue])
 
     return <React.Fragment>

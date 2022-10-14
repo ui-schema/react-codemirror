@@ -33,8 +33,8 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
         CodeBar: CustomCodeBar,
     },
 ) => {
-    const handleOnChange: CodeMirrorOnChange = React.useCallback((_editor, newValue, prevValue) => {
-        if(newValue === prevValue) {
+    const handleOnChange: CodeMirrorOnChange = React.useCallback((editor, newValue) => {
+        if(!editor.docChanged || typeof newValue !== 'string') {
             return
         }
         onChange({
@@ -84,6 +84,7 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
             onChange={readOnly ? undefined : handleOnChange}
             extensions={extensions}
             classNamesContent={classNamesContent}
+            dense={schema.getIn(['view', 'dense']) as boolean}
         />
 
         <ValidityHelperText errors={errors} showValidity={showValidity} schema={schema}/>

@@ -1,3 +1,5 @@
 export * from './CodeMirror'
+export * from './createEditorView'
 export * from './useCodeMirror'
 export * from './useEditorClasses'
+export * from './useExtension'

@@ -4,12 +4,18 @@ import { CodeMirrorComponentProps } from '@ui-schema/kit-codemirror/CodeMirror'
 import { CodeMirrorOnChange } from '@ui-schema/kit-codemirror/useCodeMirror'
 import { Extension } from '@codemirror/state'
 import { CodeBar, CodeBarProps } from '@ui-schema/material-code/CodeBar'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
+import { TextFieldProps } from '@mui/material/TextField'
 import FormLabel from '@mui/material/FormLabel'
 import { ValidityHelperText } from '@ui-schema/ds-material/Component/LocaleHelperText'
 
+export interface MuiCodeMirrorStyleProps {
+    dense?: boolean
+    variant?: TextFieldProps['variant'] | 'embed'
+}
+
 export interface WidgetCodeProps {
-    CodeMirror: React.FC<CodeMirrorComponentProps>
+    CodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirrorStyleProps>
     extensions?: Extension[]
     barBegin?: React.ReactElement
     barContent?: React.ReactElement
@@ -30,8 +36,8 @@ export const WidgetCode: React.ComponentType<WidgetProps & WithScalarValue & Wid
         CodeBar: CustomCodeBar,
     },
 ) => {
-    const handleOnChange: CodeMirrorOnChange = React.useCallback((_editor, newValue, prevValue) => {
-        if(newValue === prevValue) {
+    const handleOnChange: CodeMirrorOnChange = React.useCallback((v, newValue) => {
+        if(!v.docChanged || typeof newValue !== 'string') {
             return
         }
         onChange({
@@ -71,6 +77,7 @@ export const WidgetCode: React.ComponentType<WidgetProps & WithScalarValue & Wid
             onChange={readOnly ? undefined : handleOnChange}
             extensions={extensions}
             classNamesContent={classNamesContent}
+            dense={schema.getIn(['view', 'dense']) as boolean}
         />
 
         <ValidityHelperText errors={errors} showValidity={showValidity} schema={schema}/>
