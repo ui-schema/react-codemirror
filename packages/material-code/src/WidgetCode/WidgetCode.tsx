@@ -55,22 +55,27 @@ export const WidgetCode: React.ComponentType<WidgetProps & WithScalarValue & Wid
     const hideTitle = schema?.getIn(['view', 'hideTitle'])
     const readOnly = readOnlyProp || schema?.get('readOnly')
 
-    const classNamesContent = React.useMemo(() => (valid ? undefined : ['invalid']), [valid])
+    const classNamesContent = React.useMemo(
+        () => (!showValidity || valid ? undefined : ['invalid']),
+        [valid, showValidity],
+    )
     const CodeBarComp = CustomCodeBar || CodeBar
+    const showTitle = required || formatValue || !hideTitle
     return <>
-        <Box mb={0.5}>
-            <FormLabel error={(!valid && showValidity)}>
-                {hideTitle ? null : <>
-                    <TransTitle storeKeys={storeKeys} schema={schema}/>
-                    {required ? ' *' : null}
-                </>}
-                {formatValue ? <>
-                    {hideTitle ? null : ' ('}
-                    <Trans text={'formats.' + formatValue} fallback={formatValue}/>
-                    {hideTitle ? null : ')'}
-                </> : null}
-            </FormLabel>
-        </Box>
+        {showTitle ?
+            <Box mb={0.5}>
+                <FormLabel error={(!valid && showValidity)}>
+                    {hideTitle ? null : <>
+                        <TransTitle storeKeys={storeKeys} schema={schema}/>
+                        {required ? ' *' : null}
+                    </>}
+                    {formatValue ? <>
+                        {hideTitle ? null : ' ('}
+                        <Trans text={'formats.' + formatValue} fallback={formatValue}/>
+                        {hideTitle ? null : ')'}
+                    </> : null}
+                </FormLabel>
+            </Box> : null}
 
         <CodeMirror
             value={(value as string) || ''}

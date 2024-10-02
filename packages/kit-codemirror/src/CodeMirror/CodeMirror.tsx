@@ -13,7 +13,7 @@ export interface CodeMirrorComponentProps {
     style?: React.CSSProperties
 }
 
-export interface CodeMirrorProps extends CodeMirrorComponentProps {
+export interface CodeMirrorProps extends CodeMirrorComponentProps, Omit<React.HTMLProps<HTMLDivElement>, 'onChange' | 'value'> {
     onViewLifecycle?: CodeMirrorOnViewLifeCycle
     onExternalChange?: CodeMirrorOnExternalChange
     className?: string
@@ -21,14 +21,13 @@ export interface CodeMirrorProps extends CodeMirrorComponentProps {
 
 export const CodeMirror: React.FC<CodeMirrorProps> = (
     {
-        className,
         classNamesContent,
         onChange,
         onViewLifecycle, onExternalChange,
         value = '',
-        style,
         extensions,
         effects,
+        ...props
     },
 ) => {
     const containerRef = React.useRef<HTMLDivElement | null>(null)
@@ -54,5 +53,8 @@ export const CodeMirror: React.FC<CodeMirrorProps> = (
     // to be able to dispatch the correct effects
     useEditorClasses(editorAttributesCompartment.current, editor, classNamesContent)
 
-    return <div className={className} style={style} ref={containerRef}/>
+    return <div
+        ref={containerRef}
+        {...props}
+    />
 }

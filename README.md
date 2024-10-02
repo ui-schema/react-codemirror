@@ -47,4 +47,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 This project is free software distributed under the **[MIT LICENSE](LICENSE)**.
 
-© 2022 bemit UG (haftungsbeschränkt)
+© 2024 bemit UG (haftungsbeschränkt)

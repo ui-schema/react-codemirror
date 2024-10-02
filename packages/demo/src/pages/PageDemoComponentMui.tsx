@@ -33,7 +33,7 @@ export const PageDemoComponentMui: React.ComponentType = () => {
                 <Box mb={2}>
                     <Typography variant={'h1'} gutterBottom>Component</Typography>
                     <Typography variant={'body1'}>Plain React components demo, no UI-Schema widgets, using Material-UI styling with <code>@mui</code>.</Typography>
-                    <Typography variant={'body1'}>Page filling style, where the scrollable area is the CodeMirror Editor, use <code>variant: &qout;embed&qout;</code> to deactivate outlined/borders-radius.</Typography>
+                    <Typography variant={'body1'}>Page filling style, where the scrollable area is the CodeMirror Editor, use <code>{'variant: "embed"'}</code> to deactivate outlined/borders-radius.</Typography>
                     <Typography variant={'body1'}>
                         <Link
                             href={'https://github.com/ui-schema/react-codemirror/blob/main/packages/demo/src/pages/PageDemoComponentMui.tsx'}
