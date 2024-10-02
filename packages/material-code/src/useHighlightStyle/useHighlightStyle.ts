@@ -1,9 +1,15 @@
 import React from 'react'
 import { tags } from '@lezer/highlight'
 import { HighlightStyle } from '@codemirror/language'
-import useTheme from '@mui/material/styles/useTheme'
+import { useTheme } from '@mui/material/styles'
 
-export const useHighlightStyle = (): HighlightStyle => {
+export const useHighlightStyle = (
+    {
+        headlineUnderline = true,
+    }: {
+        headlineUnderline?: boolean
+    } = {},
+): HighlightStyle => {
     const {palette} = useTheme()
     return React.useMemo(() => HighlightStyle.define([
         {
@@ -12,7 +18,7 @@ export const useHighlightStyle = (): HighlightStyle => {
         },
         {
             tag: tags.heading,
-            textDecoration: 'underline',
+            ...headlineUnderline ? {textDecoration: 'underline'} : {},
             fontWeight: 'bold',
         },
         {
@@ -36,12 +42,16 @@ export const useHighlightStyle = (): HighlightStyle => {
             color: palette.mode === 'dark' ? '#f746ec' : '#8e0b99',
         },
         {
-            tag: [tags.atom, tags.bool, tags.url, tags.contentSeparator, tags.labelName],
+            tag: [tags.atom, tags.bool, tags.null, tags.url, tags.contentSeparator, tags.labelName],
             color: palette.mode === 'dark' ? '#978ed3' : '#121cb1',
         },
         {
-            tag: [tags.literal, tags.inserted],
+            tag: [tags.literal], // numbers in json+yaml
             color: palette.mode === 'dark' ? '#2da273' : '#116644',
+        },
+        {
+            tag: [tags.inserted],
+            color: palette.mode === 'dark' ? '#1a9544' : '#068248',
         },
         {
             tag: [tags.deleted],
@@ -64,12 +74,18 @@ export const useHighlightStyle = (): HighlightStyle => {
             color: '#ee4400',
         },
         {
-            tag: tags.definition(tags.variableName),
+            tag: [
+                tags.definition(tags.variableName),
+                // e.g. sass-vars
+                tags.special(tags.variableName),
+                tags.variableName,
+                tags.attributeName,
+            ],
             color: palette.mode === 'dark' ? '#5279ec' : '#255fb9',
         },
         {
             tag: tags.local(tags.variableName),
-            color: '#3300aa',
+            color: palette.mode === 'dark' ? '#8e6bdf' : '#6b38e1',
         },
         {
             tag: [tags.typeName, tags.namespace],
@@ -77,15 +93,15 @@ export const useHighlightStyle = (): HighlightStyle => {
         },
         {
             tag: tags.className,
-            color: '#116677',
+            color: palette.mode === 'dark' ? '#3c8b9b' : '#116677',
         },
         {
-            tag: [tags.special(tags.variableName), tags.macroName],
+            tag: [tags.macroName],
             color: '#225566',
         },
         {
             tag: tags.definition(tags.propertyName),
-            color: '#0000cc',
+            color: palette.mode === 'dark' ? '#2981df' : '#0000cc',
         },
         {
             tag: tags.comment,
@@ -93,7 +109,7 @@ export const useHighlightStyle = (): HighlightStyle => {
         },
         {
             tag: tags.invalid,
-            color: '#ff0000',
+            color: palette.error.main,
         },
-    ]), [palette])
+    ]), [headlineUnderline, palette.mode, palette.text.secondary, palette.error.main])
 }

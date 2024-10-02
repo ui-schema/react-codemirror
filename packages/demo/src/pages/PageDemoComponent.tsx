@@ -18,7 +18,7 @@ import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
 import { closeBrackets, autocompletion, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete'
 import { lintKeymap } from '@codemirror/lint'
 import { Compartment, EditorState } from '@codemirror/state'
-import useTheme from '@mui/material/styles/useTheme'
+import { useTheme } from '@mui/material/styles'
 import { Button } from '@mui/material'
 
 export const PageDemoComponent: React.ComponentType = () => {
