@@ -68,7 +68,10 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
     const hideTitle = schema?.getIn(['view', 'hideTitle'])
     const readOnly = readOnlyProp || schema?.get('readOnly')
 
-    const classNamesContent = React.useMemo(() => (valid ? undefined : ['invalid']), [valid])
+    const classNamesContent = React.useMemo(
+        () => (!showValidity || valid ? undefined : ['invalid']),
+        [valid, showValidity],
+    )
     const CodeBarComp = CustomCodeBar || CodeBar
     return <>
         {hideTitle ? null :
@@ -102,7 +105,7 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
                         f =>
                             <MenuItem key={f} value={f} dense>
                                 <Trans text={'formats.' + f} fallback={f}/>
-                            </MenuItem>
+                            </MenuItem>,
                     )}
                 </Select>
             }
