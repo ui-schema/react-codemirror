@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/material-code",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "description": "Code editor widgets using CodeMirror, with Material-UI styling for UI-Schema",
     "homepage": "https://ui-schema.bemit.codes/docs/material-code/material-code",
     "author": {
@@ -41,7 +41,6 @@
         "__release": "cp package.json build/ && cp package-lock.json build/ && cp README.md build/ && npm publish build"
     },
     "dependencies": {
-        "react-uid": "^2.2.0"
     },
     "devDependencies": {
         "@types/react": "^17.0",

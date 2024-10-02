@@ -29,11 +29,9 @@ const base: Partial<Config.InitialOptions> = {
         'json',
         'node',
     ],
-    collectCoverage: true,
     coveragePathIgnorePatterns: [
         '(tests/.*.mock).(jsx?|tsx?|ts?|js?)$',
     ],
-    verbose: true,
 }
 
 const config: Config.InitialOptions = {
@@ -42,6 +40,8 @@ const config: Config.InitialOptions = {
     /*transformIgnorePatterns: [
         'node_modules/?!(@ui-schema)',
     ],*/
+    verbose: true,
+    collectCoverage: true,
     projects: [
         ...packages.map(pkg => ({
             displayName: 'test-' + pkg,

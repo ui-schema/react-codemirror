@@ -2,6 +2,26 @@ const path = require('path');
 const {packer, webpack} = require('lerna-packer');
 const {makeModulePackageJson, copyRootPackageJson, transformForEsModule} = require('lerna-packer/packer/modulePackages');
 
+const legacyBabelTargets = [
+    {
+        distSuffix: '',
+        args: [
+            '--env-name', 'cjs', '--no-comments', '--copy-files',
+            '--extensions', '.ts', '--extensions', '.tsx', '--extensions', '.js', '--extensions', '.jsx',
+            '--ignore', '**/*.d.ts',
+            '--ignore', '**/*.test.tsx', '--ignore', '**/*.test.ts', '--ignore', '**/*.test.js',
+        ],
+    },
+    {
+        distSuffix: '/esm', args: [
+            '--no-comments',
+            '--extensions', '.ts', '--extensions', '.tsx', '--extensions', '.js', '--extensions', '.jsx',
+            '--ignore', '**/*.d.ts',
+            '--ignore', '**/*.test.tsx', '--ignore', '**/*.test.ts', '--ignore', '**/*.test.js',
+        ],
+    },
+]
+
 packer({
     apps: {
         demo: {
@@ -17,7 +37,13 @@ packer({
                     progress: false,
                 },
             },
+            vendors: [],
             publicPath: '/',
+            plugins: [
+                new webpack.DefinePlugin({
+                    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+                }),
+            ],
         },
     },
     packages: {
@@ -27,11 +53,13 @@ packer({
             name: '@ui-schema/kit-codemirror',
             root: path.resolve(__dirname, 'packages', 'kit-codemirror'),
             entry: path.resolve(__dirname, 'packages', 'kit-codemirror/src/'),
+            babelTargets: legacyBabelTargets,
         },
         materialCode: {
             name: '@ui-schema/material-code',
             root: path.resolve(__dirname, 'packages', 'material-code'),
             entry: path.resolve(__dirname, 'packages', 'material-code/src/'),
+            babelTargets: legacyBabelTargets,
         },
     },
 }, __dirname, {
