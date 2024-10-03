@@ -1,7 +1,7 @@
 import React from 'react'
 import { StoreKeyType, Trans, TransTitle, WidgetProps, WithScalarValue } from '@ui-schema/ui-schema'
 import { CodeMirrorOnChange } from '@ui-schema/kit-codemirror/useCodeMirror'
-import { WidgetCodeProps } from '@ui-schema/material-code'
+import { WidgetCodeProps } from '@ui-schema/material-code/WidgetCode'
 import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { List } from 'immutable'

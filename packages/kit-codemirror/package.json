@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/kit-codemirror",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "CodeMirror v6 as React Component, with hooks and stuff - but only the necessities.",
     "homepage": "https://ui-schema.bemit.codes/docs/kit-codemirror/kit-codemirror",
     "author": {
@@ -41,8 +41,9 @@
         "react": "^17.0 || ^18.0",
         "react-dom": "^17.0 || ^18.0"
     },
-    "main": "index.js",
-    "module": "esm/index.js",
+    "main": "./index.js",
+    "module": "./esm/index.js",
+    "types": "./index.d.ts",
     "scripts": {
         "dtsgen": "tsc -d --emitDeclarationOnly --pretty && merge-dirs build/dts build && rm -rf build/dts && rm -rf build/**/*.test.*"
     },
