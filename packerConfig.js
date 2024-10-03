@@ -1,6 +1,24 @@
 const path = require('path');
 const {packer, webpack} = require('lerna-packer');
-const {makeModulePackageJson, copyRootPackageJson, transformForEsModule} = require('lerna-packer/packer/modulePackages');
+const {makeModulePackageJson, copyRootPackageJson} = require('lerna-packer/packer/modulePackages');
+
+/**
+ * based on `transformForEsModule` but with the legacy syntax, for CJS and non strict ESM
+ */
+const transformForCommon = ({level, root, dir}) => {
+    return {
+        sideEffects: false,
+        module:
+            path.join(
+                '../'.repeat(level + 1),
+                'esm',
+                dir.slice(root.length + 1).replace(/\\/g, '/').split(/\//g).join('/'),
+                'index.js',
+            ).replace(/\\/g, '/'),
+        main: './index.js',
+        types: './index.d.ts',
+    }
+}
 
 const legacyBabelTargets = [
     {
@@ -65,7 +83,7 @@ packer({
 }, __dirname, {
     afterEsModules: (packages, pathBuild) => {
         return Promise.all([
-            makeModulePackageJson(transformForEsModule)(packages, pathBuild),
+            makeModulePackageJson(transformForCommon)(packages, pathBuild),
             copyRootPackageJson()(packages, pathBuild),
         ])
     },

@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/material-code",
-    "version": "0.4.3",
+    "version": "0.4.4",
     "description": "Code editor widgets using CodeMirror, with Material-UI styling for UI-Schema",
     "homepage": "https://ui-schema.bemit.codes/docs/material-code/material-code",
     "author": {
@@ -34,8 +34,9 @@
     "bugs": {
         "url": "https://github.com/ui-schema/react-codemirror/issues"
     },
-    "main": "index.js",
-    "module": "esm/index.js",
+    "main": "./index.js",
+    "module": "./esm/index.js",
+    "types": "./index.d.ts",
     "scripts": {
         "dtsgen": "tsc -d --emitDeclarationOnly --pretty && merge-dirs build/dts/material-code/src build && rm -rf build/dts && rm -rf build/**/*.test.* build/**/*.mock.*",
         "__release": "cp package.json build/ && cp package-lock.json build/ && cp README.md build/ && npm publish build"
