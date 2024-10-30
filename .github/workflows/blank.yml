@@ -50,7 +50,7 @@ jobs:
 
             -   name: Run tests
                 run: |
-                    npm test
+                    npm run check
 
             -   name: Build
                 run: |

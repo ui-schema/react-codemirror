@@ -1,44 +1,7 @@
 const path = require('path');
 const {packer, webpack} = require('lerna-packer');
-const {makeModulePackageJson, copyRootPackageJson} = require('lerna-packer/packer/modulePackages');
-
-/**
- * based on `transformForEsModule` but with the legacy syntax, for CJS and non strict ESM
- */
-const transformForCommon = ({level, root, dir}) => {
-    return {
-        sideEffects: false,
-        module:
-            path.join(
-                '../'.repeat(level + 1),
-                'esm',
-                dir.slice(root.length + 1).replace(/\\/g, '/').split(/\//g).join('/'),
-                'index.js',
-            ).replace(/\\/g, '/'),
-        main: './index.js',
-        types: './index.d.ts',
-    }
-}
-
-const legacyBabelTargets = [
-    {
-        distSuffix: '',
-        args: [
-            '--env-name', 'cjs', '--no-comments', '--copy-files',
-            '--extensions', '.ts', '--extensions', '.tsx', '--extensions', '.js', '--extensions', '.jsx',
-            '--ignore', '**/*.d.ts',
-            '--ignore', '**/*.test.tsx', '--ignore', '**/*.test.ts', '--ignore', '**/*.test.js',
-        ],
-    },
-    {
-        distSuffix: '/esm', args: [
-            '--no-comments',
-            '--extensions', '.ts', '--extensions', '.tsx', '--extensions', '.js', '--extensions', '.jsx',
-            '--ignore', '**/*.d.ts',
-            '--ignore', '**/*.test.tsx', '--ignore', '**/*.test.ts', '--ignore', '**/*.test.js',
-        ],
-    },
-]
+const {babelTargetsLegacyCjsFirst} = require('lerna-packer/packer/babelEsModules');
+const {makeModulePackageJson, copyRootPackageJson, transformerForLegacyCjsFirst} = require('lerna-packer/packer/modulePackages');
 
 packer({
     apps: {
@@ -55,13 +18,13 @@ packer({
                     progress: false,
                 },
             },
-            vendors: [],
             publicPath: '/',
             plugins: [
                 new webpack.DefinePlugin({
                     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
                 }),
             ],
+            aliasPackagesBuild: 'production',
         },
     },
     packages: {
@@ -71,21 +34,21 @@ packer({
             name: '@ui-schema/kit-codemirror',
             root: path.resolve(__dirname, 'packages', 'kit-codemirror'),
             entry: path.resolve(__dirname, 'packages', 'kit-codemirror/src/'),
-            babelTargets: legacyBabelTargets,
+            babelTargets: babelTargetsLegacyCjsFirst,
         },
         materialCode: {
             name: '@ui-schema/material-code',
             root: path.resolve(__dirname, 'packages', 'material-code'),
             entry: path.resolve(__dirname, 'packages', 'material-code/src/'),
-            babelTargets: legacyBabelTargets,
+            babelTargets: babelTargetsLegacyCjsFirst,
         },
     },
 }, __dirname, {
     afterEsModules: (packages, pathBuild) => {
         return Promise.all([
-            makeModulePackageJson(transformForCommon)(packages, pathBuild),
+            makeModulePackageJson(transformerForLegacyCjsFirst)(packages, pathBuild),
             copyRootPackageJson()(packages, pathBuild),
-        ])
+        ]).then(() => undefined)
     },
 })
     .then(([execs, elapsed]) => {
