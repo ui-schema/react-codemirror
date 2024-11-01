@@ -1,30 +1,30 @@
 {
     "compilerOptions": {
-        "module": "esnext",
-        "target": "es2015",
+        "module": "ESNext",
+        "target": "ES2022",
         "jsx": "preserve",
         "removeComments": false,
-        "moduleResolution": "node",
+        "moduleResolution": "Bundler",
         "forceConsistentCasingInFileNames": true,
         "strict": true,
-        "noEmit": false,
         "experimentalDecorators": true,
         "baseUrl": "./",
+        "rootDir": "./",
         "allowSyntheticDefaultImports": true,
         "noErrorTruncation": true,
-        "allowJs": true,
+        "allowJs": false,
         "declaration": true,
-        "resolveJsonModule": true,
+        "resolveJsonModule": false,
         "skipLibCheck": true,
         "noUnusedLocals": true,
         "noImplicitAny": false,
         "noUnusedParameters": true,
         "paths": {
             "@ui-schema/kit-codemirror": [
-                "kit-codemirror/src"
+                "kit-codemirror/src/index.ts"
             ],
             "@ui-schema/kit-codemirror/*": [
-                "kit-codemirror/src/*"
+                "kit-codemirror/src/*/index.ts"
             ],
             "@ui-schema/material-code": [
                 "material-code/src"

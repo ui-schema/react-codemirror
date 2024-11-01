@@ -1,1 +1,1 @@
-export * from './useEditorClasses'
+export * from './useEditorClasses.js'

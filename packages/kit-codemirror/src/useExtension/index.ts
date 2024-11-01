@@ -1,1 +1,1 @@
-export * from './useExtension'
+export * from './useExtension.js'

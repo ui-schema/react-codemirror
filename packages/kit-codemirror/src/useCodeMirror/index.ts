@@ -1,1 +1,1 @@
-export * from './useCodeMirror'
+export * from './useCodeMirror.js'
