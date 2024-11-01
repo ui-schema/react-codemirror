@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/material-code",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "description": "Code editor widgets using CodeMirror, with Material-UI styling for UI-Schema",
     "homepage": "https://ui-schema.bemit.codes/docs/material-code/material-code",
     "author": {
@@ -41,10 +41,11 @@
         "dtsgen": "tsc -d --emitDeclarationOnly --pretty && merge-dirs build/dts/material-code/src build && rm -rf build/dts && rm -rf build/**/*.test.* build/**/*.mock.*",
         "__release": "cp package.json build/ && cp package-lock.json build/ && cp README.md build/ && npm publish build"
     },
+    "sideEffects": false,
     "dependencies": {
     },
     "devDependencies": {
-        "@types/react": "^17.0",
+        "@types/react": "^18.0",
         "@mui/material": "^5.1",
         "@mui/icons-material": "^5.1",
         "@codemirror/state": "^6.0.0",
@@ -54,8 +55,8 @@
         "@ui-schema/ds-material": "~0.4.0-alpha",
         "@ui-schema/ui-schema": "~0.4.0-alpha",
         "immutable": "^4.0.0",
-        "react": "^17.0",
-        "react-dom": "^17.0"
+        "react": "^18.0",
+        "react-dom": "^18.0"
     },
     "peerDependencies": {
         "@mui/material": "^5.1",

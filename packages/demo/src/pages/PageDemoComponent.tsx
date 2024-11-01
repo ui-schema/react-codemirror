@@ -19,7 +19,7 @@ import { closeBrackets, autocompletion, closeBracketsKeymap, completionKeymap } 
 import { lintKeymap } from '@codemirror/lint'
 import { Compartment, EditorState } from '@codemirror/state'
 import { useTheme } from '@mui/material/styles'
-import { Button } from '@mui/material'
+import Button from '@mui/material/Button'
 
 export const PageDemoComponent: React.ComponentType = () => {
     return <>

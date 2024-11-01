@@ -6,13 +6,15 @@
     "homepage": "",
     "author": "Michael Becker <michael@bemit.codes>",
     "license": "MIT",
+    "scripts": {
+        "tscheck": "tsc --noEmit"
+    },
     "dependencies": {
         "@mui/material": "^5.1",
         "@mui/icons-material": "^5.1",
         "@emotion/react": "^11.9.0",
         "@emotion/styled": "^11.8.1",
         "@mui/lab": "^5.0.0-alpha.45",
-        "@types/react": "^17.0",
         "@codemirror/state": "^6.0.0",
         "@codemirror/view": "^6.0.0",
         "@codemirror/commands": "^6.0.0",
@@ -31,13 +33,13 @@
         "@ui-schema/material-code": "~0.4.3",
         "@ui-schema/ui-schema": "~0.4.1",
         "immutable": "^4.0.0",
-        "react": "^17.0",
-        "react-dom": "^17.0",
-        "react-error-boundary": "^1.2.5",
+        "react": "^18.0",
+        "react-dom": "^18.0",
         "react-router": "^6.3.0",
         "react-router-dom": "^6.3.0",
-        "react-uid": "^2.2.0",
-        "scheduler": "^0.18.0",
         "styled-components": "^5.0.0"
+    },
+    "devDependencies": {
+        "@types/react": "^18.0"
     }
 }

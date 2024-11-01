@@ -23,7 +23,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { html } from '@codemirror/lang-html'
 import { css } from '@codemirror/lang-css'
 import { MuiCodeMirrorStyleProps, useEditorTheme, useHighlightStyle } from '@ui-schema/material-code'
-import { useExtension } from '@ui-schema/kit-codemirror'
+import { useExtension } from '@ui-schema/kit-codemirror/useExtension'
 
 export const PageDemoComponentMui: React.ComponentType = () => {
     return <>
