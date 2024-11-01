@@ -1,1 +1,1 @@
-export * from './createEditorView'
+export * from './createEditorView.js'

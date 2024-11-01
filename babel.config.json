@@ -21,6 +21,16 @@
                 "@babel/preset-env",
                 "@babel/preset-react",
                 "@babel/preset-typescript"
+            ],
+            "plugins": [
+                [
+                    "babel-plugin-replace-import-extension",
+                    {
+                        "extMapping": {
+                            ".js": ".cjs"
+                        }
+                    }
+                ]
             ]
         },
         "test": {
