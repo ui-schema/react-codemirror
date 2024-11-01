@@ -6,6 +6,9 @@
     "homepage": "",
     "author": "Michael Becker <michael@bemit.codes>",
     "license": "MIT",
+    "scripts": {
+        "tscheck": "tsc --noEmit"
+    },
     "dependencies": {
         "@mui/material": "^5.1",
         "@mui/icons-material": "^5.1",

@@ -19,14 +19,14 @@
         "doc-gen": "lerna run doc-gen",
         "page-index": "lerna run page-index",
         "dtsgen": "lerna run dtsgen",
+        "tscheck": "lerna run tscheck",
         "profile": "cross-env NODE_OPTIONS='--max-old-space-size=4096' NODE_ENV=production node packerConfig.js --build --profile",
         "clean": "npm run clean-dist && lerna clean -y",
         "clean-dist": "node packerConfig.js --clean",
         "clean-lock": "rimraf --glob packages/*/package-lock.json",
         "bootstrap": "lerna bootstrap --force-local",
-        "hoist": "lerna bootstrap --hoist -- --legacy-peer-deps",
         "link": "lerna link --force-local",
-        "check": "npm run lint && npm run test",
+        "check": "npm run lint && npm run tscheck && npm run test",
         "lint": "cross-env NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" eslint -c=.eslintrc --ext=.tsx,.ts --max-warnings=0 'packages'",
         "test": "jest -c=\"jest.config.ts\" --passWithNoTests",
         "tdd": "npm test -- --watch --watchman --coverage=false",
@@ -42,15 +42,10 @@
         "eslint-plugin-jsx-a11y": "^6.5.1",
         "eslint-plugin-react-hooks": "^4.3.0",
         "lerna": "^3.22.1",
-        "lerna-packer": "0.10.1",
+        "lerna-packer": "0.10.2",
         "merge-dirs": "^0.2.1",
         "sloc": "^0.2.1",
         "ts-node": "^10.9.2",
         "typescript": "~5.3.3"
-    },
-    "jest-runner-eslint": {
-        "cliOptions": {
-            "maxWarnings": 0
-        }
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StoreSchemaType } from '@ui-schema/ui-schema'
+import { StoreSchemaType } from '@ui-schema/ui-schema/CommonTypings'
 import Box from '@mui/material/Box'
 
 export interface CodeBarProps {

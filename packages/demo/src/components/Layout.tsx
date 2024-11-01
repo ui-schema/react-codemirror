@@ -4,7 +4,7 @@ import { PageHome } from '../pages/PageHome'
 import { PageDemoWidget } from '../pages/PageDemoWidget'
 import { PageDemoLangSelectable } from '../pages/PageDemoLangSelectable'
 import { PageDemoComponent } from '../pages/PageDemoComponent'
-import { Button } from '@mui/material'
+import Button from '@mui/material/Button'
 import { PageDemoComponentMui } from '../pages/PageDemoComponentMui'
 
 export const Layout: React.ComponentType<{ setTheme: React.Dispatch<React.SetStateAction<'dark' | 'light'>> }> = ({setTheme}) => {

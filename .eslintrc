@@ -143,7 +143,23 @@
                     "warn",
                     "never"
                 ],
-                "semi-style": "off"
+                "semi-style": "off",
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        "paths": [
+                            "@mui/material",
+                            "@mui/icon-material",
+                            "@ui-schema/kit-codemirror",
+                            "@ui-schema/materia-code"
+                        ],
+                        "patterns": [
+                            "@mui/*/*/*",
+                            "@ui-schema/kit-codemirror/*/*",
+                            "@ui-schema/materia-code/*/*/*"
+                        ]
+                    }
+                ]
             }
         }
     ]
