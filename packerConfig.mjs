@@ -4,7 +4,7 @@ import { babelTargetsLegacyCjsFirst } from 'lerna-packer/packer/babelEsModules.j
 import {
     makeModulePackageJson,
     copyRootPackageJson,
-    transformerForLegacyCjsFirst
+    transformerForLegacyCjsFirst,
 } from 'lerna-packer/packer/modulePackages.js'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -26,6 +26,7 @@ const babelTargetsEsmCjs = [
             '--extensions', '.ts', '--extensions', '.tsx', '--extensions', '.js', '--extensions', '.jsx',
             '--ignore', '**/*.d.ts',
             '--ignore', '**/*.test.tsx', '--ignore', '**/*.test.ts', '--ignore', '**/*.test.js',
+            '--ignore', '**/*.mock.ts', '--ignore', '**/*.mock.js',
         ],
     },
     {
@@ -35,6 +36,7 @@ const babelTargetsEsmCjs = [
             '--extensions', '.ts', '--extensions', '.tsx', '--extensions', '.js', '--extensions', '.jsx',
             '--ignore', '**/*.d.ts',
             '--ignore', '**/*.test.tsx', '--ignore', '**/*.test.ts', '--ignore', '**/*.test.js',
+            '--ignore', '**/*.mock.ts', '--ignore', '**/*.mock.js',
         ],
     },
 ]
@@ -57,7 +59,6 @@ const babelTargetsEsmCjs = [
 const transformerForEsmCjs = () => {
     return {
         sideEffects: false,
-        type: 'module',
         main: './index.cjs',
         module: './index.js',
         /*exports: {
@@ -127,11 +128,8 @@ packer({
         ],
     },
     afterEsModules: (packages, pathBuild) => {
-        const legacyCjsEsm = {materialCode: packages.materialCode}
-        const strictEsmCjs = {kitCode: packages.kitCode}
         return Promise.all([
-            makeModulePackageJson(transformerForLegacyCjsFirst)(legacyCjsEsm, pathBuild),
-            makeModulePackageJson(transformerForEsmCjs)(strictEsmCjs, pathBuild),
+            makeModulePackageJson(transformerForEsmCjs)(packages, pathBuild),
             copyRootPackageJson()(packages, pathBuild),
         ]).then(() => undefined)
     },

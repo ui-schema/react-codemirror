@@ -38,16 +38,16 @@
     "module": "./esm/index.js",
     "types": "./index.d.ts",
     "scripts": {
-        "dtsgen": "tsc -d --emitDeclarationOnly --pretty && merge-dirs build/dts/material-code/src build && rm -rf build/dts && rm -rf build/**/*.test.* build/**/*.mock.*",
+        "dtsgen": "tsc -d --emitDeclarationOnly --pretty && node ../../tools/merge-dirs.js build/dts/material-code/src build && rm -rf build/dts && rm -rf build/**/*.test.* build/**/*.mock.*",
         "__release": "cp package.json build/ && cp package-lock.json build/ && cp README.md build/ && npm publish build"
     },
     "sideEffects": false,
     "dependencies": {
     },
     "devDependencies": {
-        "@types/react": "^18.0",
-        "@mui/material": "^5.1",
-        "@mui/icons-material": "^5.1",
+        "@types/react": "^19.0",
+        "@mui/material": "^6.4.12",
+        "@mui/icons-material": "^6.4.12",
         "@codemirror/state": "^6.0.0",
         "@codemirror/view": "^6.0.0",
         "@codemirror/language": "^6.1.0",
@@ -55,12 +55,12 @@
         "@ui-schema/ds-material": "~0.4.3",
         "@ui-schema/ui-schema": "~0.4.7",
         "immutable": "^5.0.0",
-        "react": "^18.0",
-        "react-dom": "^18.0"
+        "react": "^19.0",
+        "react-dom": "^19.0"
     },
     "peerDependencies": {
-        "@mui/material": "^5.1",
-        "@mui/icons-material": "^5.1",
+        "@mui/material": "^5.1 || ^6.1",
+        "@mui/icons-material": "^6.1",
         "@codemirror/state": "^6.0.0",
         "@codemirror/view": "^6.0.0",
         "@codemirror/language": "^6.1.0",
@@ -68,7 +68,7 @@
         "@ui-schema/ds-material": "~0.4.0-alpha",
         "@ui-schema/ui-schema": "~0.4.0-alpha",
         "immutable": "^4.0.0 || ^5.0.0",
-        "react": "^17.0 || ^18.0"
+        "react": "^17.0 || ^18.0 || ^19.0"
     },
     "publishConfig": {
         "access": "public"

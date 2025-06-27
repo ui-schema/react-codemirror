@@ -9,7 +9,7 @@ Thin-wrapper for CodeMirror v6 to use as React Component, with hooks and stuff t
 
 This project is free software distributed under the [**MIT License**](https://github.com/ui-schema/ui-schema/blob/master/LICENSE).
 
-© 2024 bemit UG (haftungsbeschränkt)
+© 2025 bemit UG (haftungsbeschränkt)
 
 ***
 
