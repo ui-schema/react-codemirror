@@ -58,8 +58,8 @@ export const WidgetCode: React.ComponentType<WidgetProps & WithScalarValue & Wid
     const hideTitle = schema?.getIn(['view', 'hideTitle'])
     const readOnly = readOnlyProp || schema?.get('readOnly')
 
-    const classNamesContent = React.useMemo(
-        () => (!showValidity || valid ? undefined : ['invalid']),
+    const classNameContent = React.useMemo(
+        () => (!showValidity || valid ? undefined : 'invalid'),
         [valid, showValidity],
     )
     const CodeBarComp = CustomCodeBar || CodeBar
@@ -84,7 +84,7 @@ export const WidgetCode: React.ComponentType<WidgetProps & WithScalarValue & Wid
             value={(value as string) || ''}
             onChange={readOnly ? undefined : handleOnChange}
             extensions={extensions}
-            classNamesContent={classNamesContent}
+            classNameContent={classNameContent}
             dense={schema.getIn(['view', 'dense']) as boolean}
         />
 

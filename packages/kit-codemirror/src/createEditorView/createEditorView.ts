@@ -1,5 +1,5 @@
 import { EditorView } from '@codemirror/view'
-import { EditorState, Extension } from '@codemirror/state'
+import { EditorState, Extension, Transaction } from '@codemirror/state'
 import { CodeMirrorOnChange, CodeMirrorOnExternalChange } from '@ui-schema/kit-codemirror/useCodeMirror'
 
 /**
@@ -7,6 +7,7 @@ import { CodeMirrorOnChange, CodeMirrorOnExternalChange } from '@ui-schema/kit-c
  */
 export const replaceWholeDoc: CodeMirrorOnExternalChange = (editor, nextValue) => {
     editor?.dispatch({
+        annotations: Transaction.remote.of(true),
         changes: {
             from: 0,
             to: editor.state.doc.length,
