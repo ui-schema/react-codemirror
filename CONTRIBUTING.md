@@ -4,8 +4,8 @@
 2. Install dependencies (like lerna, webpack): `npm i`
 3. Start dev-server: `npm start`
     - (will clean-dist + start demo app)
-4. Open browser on [localhost:4200](http://localhost:4203) for demo
-5. Explore [packages](packages)
+4. Open browser on [localhost:4203](http://localhost:4203) for demo
+5. Explore [packages](packages) and there [demo/src/pages](packages/demo/src/pages)
 6. Code -> Commit -> Pull Request -> Being Awesome!
 
 Changes from any package are reflected inside the demo package.
@@ -19,9 +19,7 @@ Changes from any package are reflected inside the demo package.
         - with `--testPathPattern` to run all tests in a specific folder / path
         - `npm run tdd -- --testPathPattern=PatternValidator -t patternValidator` for only one test and often only one file
 - Testing: `npm test`
-    - needs manual bootstrapping, linking and update handling
 - Build: `npm run build`
-    - needs manual bootstrapping and update handling
 - Clean node_modules and build dirs: `npm run clean`
 - Clean build dirs: `npm run clean-dist`
 

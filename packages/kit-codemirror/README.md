@@ -2,7 +2,8 @@
 
 Thin-wrapper for CodeMirror v6 to use as React Component, with hooks and stuff to build more advanced editors easily.
 
-- [Documentation, Examples](https://ui-schema.bemit.codes/docs/kit-codemirror/kit-codemirror)
+- [Documentation](https://github.com/ui-schema/react-codemirror/blob/main/docs)
+- [Demo](https://github.com/ui-schema/react-codemirror/blob/main/packages/demo/src/pages/PageDemoComponent.tsx)
 - [Repository](https://github.com/ui-schema/react-codemirror)
 
 ## License
