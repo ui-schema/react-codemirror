@@ -20,7 +20,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [ 18.x ]
+                node-version: [ 24 ]
         steps:
             -   uses: actions/checkout@v4
             -   name: Set Branch
@@ -44,9 +44,7 @@ jobs:
 
             -   name: Setup packages
                 run: |
-                    npm ci
-                    npm run bootstrap
-                    npm run link
+                    npm ci --legacy-peer-deps
 
             -   name: Run tests
                 run: |

@@ -49,7 +49,7 @@ export const PageDemoComponent: React.ComponentType = () => {
     </>
 }
 
-export const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
+const CustomCodeMirror: React.FC<CodeMirrorComponentProps> = (
     {
         value,
         extensions,

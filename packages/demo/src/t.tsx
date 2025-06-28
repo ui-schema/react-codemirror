@@ -5,7 +5,6 @@ import * as en from '@ui-schema/dictionary/en'
 import * as de from '@ui-schema/dictionary/de'
 
 const icons = {
-    // eslint-disable-next-line
     'AccountBox': () => <AccountBox/>,
 }
 

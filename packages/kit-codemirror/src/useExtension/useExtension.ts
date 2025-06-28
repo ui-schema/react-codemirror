@@ -1,32 +1,42 @@
-import { Compartment, Extension } from '@codemirror/state'
-import React from 'react'
+import { Compartment, Extension, StateEffect } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
+import { useLayoutEffect, useRef } from 'react'
+import type { RefObject } from 'react'
 
-export const useExtension = (ext: () => Extension, deps?: any[]) => {
-    const compartment = React.useRef<Compartment>(new Compartment())
-    const hasInit = React.useRef<boolean>(false)
-    const extRef = React.useRef<() => Extension>(ext)
-    extRef.current = ext
+export const useExtension = (
+    setupExtension: () => Extension,
+    editorRef: RefObject<EditorView | null>,
+) => {
+    const configuredRef = useRef<{ view: EditorView, cb: Function } | null>(null)
+    const compartmentRef = useRef<Compartment>(new Compartment())
 
-    const init = React.useCallback((): Extension => {
-        hasInit.current = true
-        return compartment.current.of(extRef.current())
-    }, [])
+    useLayoutEffect(() => {
+        if(
+            configuredRef.current
+            && configuredRef.current.cb === setupExtension
+            && configuredRef.current.view === editorRef.current
+        ) {
+            return
+        }
+        const compartment = compartmentRef.current
 
-    const effects: ((editor: EditorView) => void)[] | undefined = React.useMemo(() => {
-        if(!hasInit.current) return undefined
-        return [
-            function updateExtension(editor) {
-                editor.dispatch({
-                    effects: compartment.current.reconfigure(extRef.current()),
-                })
-            },
-        ]
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, deps || [])
+        if(editorRef.current) {
+            const isInitialSetup = configuredRef.current?.view !== editorRef.current
+            // exists, reconfigure
+            // new, append to config
+
+            editorRef.current.dispatch({
+                effects: isInitialSetup
+                    ? StateEffect.appendConfig.of(compartment.of(setupExtension()))
+                    : compartment.reconfigure(setupExtension()),
+            })
+            configuredRef.current = {view: editorRef.current, cb: setupExtension}
+        } else {
+            configuredRef.current = null
+        }
+    }, [editorRef, setupExtension])
 
     return {
-        init: init,
-        effects: effects,
+        compartment: compartmentRef.current,
     }
 }

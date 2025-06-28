@@ -1,3 +1,4 @@
+import { isRemoteChange } from '@ui-schema/kit-codemirror/isRemoteChange'
 import React from 'react'
 import { StoreKeyType, WithScalarValue } from '@ui-schema/ui-schema/UIStore'
 import { WidgetProps } from '@ui-schema/ui-schema/Widget'
@@ -36,8 +37,11 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
         CodeBar: CustomCodeBar,
     },
 ) => {
-    const handleOnChange: CodeMirrorOnChange = React.useCallback((editor, newValue) => {
-        if(!editor.docChanged || typeof newValue !== 'string') {
+    const handleOnChange: CodeMirrorOnChange = React.useCallback((update, newValue) => {
+        if(!update.docChanged || typeof newValue !== 'string') {
+            return
+        }
+        if(isRemoteChange(update)) {
             return
         }
         onChange({
@@ -71,8 +75,8 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
     const hideTitle = schema?.getIn(['view', 'hideTitle'])
     const readOnly = readOnlyProp || schema?.get('readOnly')
 
-    const classNamesContent = React.useMemo(
-        () => (!showValidity || valid ? undefined : ['invalid']),
+    const classNameContent = React.useMemo(
+        () => (!showValidity || valid ? undefined : 'invalid'),
         [valid, showValidity],
     )
     const CodeBarComp = CustomCodeBar || CodeBar
@@ -89,7 +93,7 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
             value={value || ''}
             onChange={readOnly ? undefined : handleOnChange}
             extensions={extensions}
-            classNamesContent={classNamesContent}
+            classNameContent={classNameContent}
             dense={schema.getIn(['view', 'dense']) as boolean}
         />
 

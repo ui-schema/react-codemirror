@@ -1,15 +1,17 @@
+import Button from '@mui/material/Button'
+import { isRemoteChange } from '@ui-schema/kit-codemirror'
 import React from 'react'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
 import { Nav } from '../components/Nav'
-import { CodeMirrorOnChange } from '@ui-schema/kit-codemirror/useCodeMirror'
-import { CodeMirrorComponentProps, CodeMirror, CodeMirrorProps } from '@ui-schema/kit-codemirror/CodeMirror'
+import { CodeMirrorOnChange, CodeMirrorOnViewLifeCycle } from '@ui-schema/kit-codemirror/useCodeMirror'
+import { CodeMirrorComponentProps, CodeMirror, CodeMirrorOnSetup } from '@ui-schema/kit-codemirror/CodeMirror'
 import {
     lineNumbers, highlightActiveLineGutter, highlightSpecialChars,
     drawSelection, dropCursor,
-    rectangularSelection, highlightActiveLine, keymap, EditorView,
+    rectangularSelection, highlightActiveLine, keymap,
     // crosshairCursor,
 } from '@codemirror/view'
 import { foldGutter, indentOnInput, syntaxHighlighting, defaultHighlightStyle, bracketMatching, foldKeymap } from '@codemirror/language'
@@ -17,17 +19,16 @@ import { history, defaultKeymap, historyKeymap, indentWithTab } from '@codemirro
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
 import { closeBrackets, autocompletion, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete'
 import { lintKeymap } from '@codemirror/lint'
-import { Compartment, EditorState, Extension } from '@codemirror/state'
+import { Compartment, EditorState } from '@codemirror/state'
 import { json } from '@codemirror/lang-json'
 import { javascript } from '@codemirror/lang-javascript'
 import { html } from '@codemirror/lang-html'
 import { css } from '@codemirror/lang-css'
 import { MuiCodeMirrorStyleProps, useEditorTheme, useHighlightStyle } from '@ui-schema/material-code'
-import { useExtension } from '@ui-schema/kit-codemirror/useExtension'
 
 export const PageDemoComponentMui: React.ComponentType = () => {
     return <>
-        <Container maxWidth={'md'} fixed style={{display: 'flex', flexGrow: 1, overflow: 'auto'}}>
+        <Container maxWidth={'xl'} fixed style={{display: 'flex', flexGrow: 1, overflow: 'auto'}}>
             <Nav/>
             <Box mx={2} py={1} style={{display: 'flex', flexDirection: 'column', overflow: 'auto', flexGrow: 1}}>
                 <Box mb={2}>
@@ -58,7 +59,14 @@ export const PageDemoComponentMui: React.ComponentType = () => {
     </>
 }
 
-export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirrorStyleProps> = (
+const formats = {
+    json: json,
+    javascript: javascript,
+    html: html,
+    css: css,
+}
+
+const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirrorStyleProps> = (
     {
         value,
         onChange,
@@ -67,25 +75,13 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
         // make this a reusable `CodeMirror` component
         // otherwise use `Pick<CodeMirrorComponentProps, 'value' | 'onChange'>` as props
         extensions,
-        effects,
         ...props
     },
 ) => {
     const [format] = React.useState('html')
 
-    // using a "direct plugin integration with reconfigure support"
     const theme = useEditorTheme(typeof onChange === 'undefined', dense, variant)
-    const themeRef = React.useRef<Extension>(theme)
-    const themeCompartment = React.useRef<Compartment>(new Compartment())
-
-    // using the `useExtension` hook to help with compartment plugins:
     const highlightStyle = useHighlightStyle()
-    const {init: initHighlightExt, effects: effectsHighlightExt} = useExtension(
-        () => syntaxHighlighting(highlightStyle || defaultHighlightStyle, {fallback: true}),
-        [highlightStyle],
-    )
-
-    const effectsRef = React.useRef<((editor: EditorView) => void)[]>(effects || [])
 
     const extensionsAll = React.useMemo(() => [
         lineNumbers(),
@@ -116,41 +112,30 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
             ...lintKeymap,
             indentWithTab,
         ]),
-        themeCompartment.current.of(themeRef.current),// only initial theme here to not re-create extensions
-        initHighlightExt(),
-        ...(format === 'json' ? [json()] : []),
-        ...(format === 'javascript' ? [javascript()] : []),
-        ...(format === 'html' ? [html()] : []),
-        ...(format === 'css' ? [css()] : []),
+        theme,
+        syntaxHighlighting(highlightStyle || defaultHighlightStyle, {fallback: true}),
+        ...formats[format] ? [formats[format]()] : [],
         ...(extensions || []),
-    ], [extensions, format, initHighlightExt])
+    ], [extensions, format, highlightStyle, theme])
 
-    // attach parent plugin effects first
-    React.useMemo(() => {
-        if(!effects) return
-        effectsRef.current.push(...effects)
-    }, [effects])
-
-    // attach each plugin effect separately (thus only the one which changes get reconfigured)
-    React.useMemo(() => {
-        // without `useExtension` you get direct access to the current `editor` inside of the effect
-        // to otherwise access `editor`, you can't use the component `CodeMirror` but must use the hook `useCodeMirror`
-        effectsRef.current.push(
-            function updateTheme(editor) {
-                editor.dispatch({
-                    effects: themeCompartment.current.reconfigure(theme),
-                })
-            },
-        )
-    }, [theme])
-
-    React.useMemo(() => {
-        if(!effectsHighlightExt) return
-        effectsRef.current.push(...effectsHighlightExt)
-    }, [effectsHighlightExt])
-
-    const onViewLifecycle: CodeMirrorProps['onViewLifecycle'] = React.useCallback((view) => {
+    const onViewLifecycle: CodeMirrorOnViewLifeCycle = React.useCallback((view) => {
         console.log('on-view-lifecycle', view)
+        // note: using any `setState` here will cause performance degradation,
+        // due to forcing a sync re-rendering after the first layout effect (which internally configures the editor view)
+        // setView(view)
+    }, [])
+
+    // a special configure effect, which runs whenever it's reference is changed,
+    // use it for adding event listeners to the editor view.
+    const onSetup: CodeMirrorOnSetup = React.useCallback((view) => {
+        if(!view) return
+        const onFocus = (evt) => {
+            console.log('focus', evt)
+        }
+        view.dom.addEventListener('focus', onFocus)
+
+        // normal cleanup function, like in any react effect
+        return () => view.dom.removeEventListener('focus', onFocus)
     }, [])
 
     return <CodeMirror
@@ -158,7 +143,7 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
         extensions={extensionsAll}
         onChange={onChange}
         onViewLifecycle={onViewLifecycle}
-        effects={effectsRef.current.splice(0, effectsRef.current.length)}
+        onSetup={onSetup}
         {...props}
     />
 }
@@ -185,26 +170,61 @@ const initialHtml = `<!DOCTYPE html>
 const DemoComponent = () => {
     const [variant] = React.useState('standard')
     const [value, setValue] = React.useState(initialHtml)
+    const [readOnly, setReadOnly] = React.useState(false)
+    const [showDouble, setShowDouble] = React.useState(false)
 
-    const onChange: CodeMirrorOnChange = React.useCallback((editor, newValue) => {
-        if(!editor.docChanged || typeof newValue !== 'string') {
+    const onChange: CodeMirrorOnChange = React.useCallback((update, newValue) => {
+        if(!update.docChanged || typeof newValue !== 'string') {
+            return
+        }
+
+        // the editors value is controlled internally, if the `value` prop changes the editors value,
+        // an onChange with the remote annotation is dispatched,
+        // while if the changes comes from the user, this annotation doesn't exist.
+        // if this sets the value, it is important to ignore these events for correct controlled behaviour.
+        // const isFromRemote = view.transactions.some(t => t.annotation(Transaction.remote))
+        if(isRemoteChange(update)) {
+            console.log('isFromRemote', update.changes, update.transactions)
             return
         }
         setValue(newValue)
     }, [setValue])
 
     return <React.Fragment>
-        <CustomCodeMirror
-            value={value}
-            onChange={onChange}
-            style={{
+        <Box
+            sx={{
                 display: 'flex',
-                flexGrow: 1,
                 overflow: 'auto',
-                ...(variant === 'standard' ? {
-                    padding: 2,// otherwise outline won't work (or use some hacky negative margin tricks etc.)
-                } : {}),
+                flexGrow: 1,
             }}
-        />
+        >
+            <CustomCodeMirror
+                value={value}
+                onChange={readOnly ? undefined : onChange}
+                style={{
+                    display: 'flex',
+                    flexGrow: 1,
+                    overflow: 'auto',
+                    ...(variant === 'standard' ? {
+                        padding: 2,// otherwise outline won't work (or use some hacky negative margin tricks etc.)
+                    } : {}),
+                }}
+            />
+            {showDouble ?
+                <CustomCodeMirror
+                    value={value}
+                    onChange={onChange}
+                    style={{
+                        display: 'flex',
+                        flexGrow: 1,
+                        overflow: 'auto',
+                        ...(variant === 'standard' ? {
+                            padding: 2,// otherwise outline won't work (or use some hacky negative margin tricks etc.)
+                        } : {}),
+                    }}
+                /> : null}
+        </Box>
+        <Button sx={{mt: 1}} onClick={() => setReadOnly(s => !s)}>{readOnly ? 'edit' : 'read'}</Button>
+        <Button sx={{mt: 1}} onClick={() => setShowDouble(s => !s)}>{showDouble ? 'single' : 'double'}</Button>
     </React.Fragment>
 }

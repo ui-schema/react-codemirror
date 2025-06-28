@@ -1,4 +1,6 @@
-import React from 'react'
+import Box from '@mui/material/Box'
+import { useCodeMirror } from '@ui-schema/kit-codemirror'
+import React, { useCallback } from 'react'
 import {
     lineNumbers, highlightActiveLineGutter, highlightSpecialChars,
     drawSelection, dropCursor,
@@ -11,36 +13,25 @@ import { history, defaultKeymap, historyKeymap, indentWithTab } from '@codemirro
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
 import { closeBrackets, autocompletion, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete'
 import { lintKeymap } from '@codemirror/lint'
-import { Compartment, EditorState, Extension } from '@codemirror/state'
+import { Compartment, EditorState, Extension, Prec } from '@codemirror/state'
 import { useEditorTheme } from '@ui-schema/material-code/useEditorTheme'
 import { useHighlightStyle } from '@ui-schema/material-code/useHighlightStyle'
-import { CodeMirrorComponentProps, CodeMirror, CodeMirrorProps } from '@ui-schema/kit-codemirror/CodeMirror'
+import { CodeMirrorComponentProps } from '@ui-schema/kit-codemirror/CodeMirror'
 import { useExtension } from '@ui-schema/kit-codemirror/useExtension'
 import { MuiCodeMirrorStyleProps } from '@ui-schema/material-code'
 
 export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirrorStyleProps & { minHeight?: number }> = (
     {
-        // values we want to override in this component
-        value, extensions, effects,
+        value, extensions,
         dense, variant,
-        // custom prop by this `demo` package:
+        onChange,
+        style, classNameContent,
         minHeight,
-        // everything else is just passed down
         ...props
     },
 ) => {
-    const {onChange} = props
     const theme = useEditorTheme(typeof onChange === 'undefined', dense, variant)
     const highlightStyle = useHighlightStyle()
-    const {init: initHighlightExt, effects: effectsHighlightExt} = useExtension(
-        () => syntaxHighlighting(highlightStyle || defaultHighlightStyle, {fallback: true}),
-        [highlightStyle],
-    )
-    const {init: initThemeExt, effects: effectsThemeExt} = useExtension(
-        () => theme,
-        [theme],
-    )
-    const effectsRef = React.useRef<((editor: EditorView) => void)[]>(effects || [])
 
     const extensionsAll: Extension[] = React.useMemo(() => [
         lineNumbers(),
@@ -71,43 +62,50 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
             ...lintKeymap,
             indentWithTab,
         ]),
-        initHighlightExt(),
-        initThemeExt(),
         ...(extensions || []),
-    ], [extensions, initHighlightExt, initThemeExt])
+    ], [extensions])
 
-    // attach parent plugin effects first
-    React.useMemo(() => {
-        if(!effects) return
-        effectsRef.current.push(...effects)
-    }, [effects])
+    const containerRef = React.useRef<HTMLDivElement | null>(null)
+    const [editorRef] = useCodeMirror({
+        onChange,
+        value: value || '',
+        extensions: extensionsAll,
+        containerRef,
+        onViewLifecycle: React.useCallback((view) => {
+            console.log('on-view-lifecycle', view)
+        }, []),
+    })
 
-    // attach each plugin effect separately (thus only the one which changes get reconfigured)
-    React.useMemo(() => {
-        if(!effectsHighlightExt) return
-        effectsRef.current.push(...effectsHighlightExt)
-    }, [effectsHighlightExt])
-    React.useMemo(() => {
-        if(!effectsThemeExt) return
-        effectsRef.current.push(...effectsThemeExt)
-    }, [effectsThemeExt])
+    useExtension(
+        useCallback(
+            () => syntaxHighlighting(highlightStyle || defaultHighlightStyle, {fallback: true}),
+            [highlightStyle],
+        ),
+        editorRef,
+    )
+    useExtension(
+        useCallback(
+            () => theme,
+            [theme],
+        ),
+        editorRef,
+    )
+    useExtension(
+        useCallback(() => {
+            return Prec.lowest(EditorView.editorAttributes.of({class: classNameContent || ''}))
+        }, [classNameContent]),
+        editorRef,
+    )
 
-    const onViewLifecycle: CodeMirrorProps['onViewLifecycle'] = React.useCallback((view) => {
-        console.log('on-view-lifecycle', view)
-    }, [])
-
-    return <CodeMirror
-        value={value || ''}
-        extensions={extensionsAll}
-        onViewLifecycle={onViewLifecycle}
-        effects={effectsRef.current.splice(0, effectsRef.current.length)}
+    return <Box
+        ref={containerRef}
         {...props}
 
         // use this to force any min height:
         style={minHeight ? {
+            ...style,
             display: 'flex',
             minHeight: minHeight,
-        } : undefined}
-        // className={className}
+        } : style}
     />
 }

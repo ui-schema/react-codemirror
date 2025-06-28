@@ -10,11 +10,11 @@
         "tscheck": "tsc --noEmit"
     },
     "dependencies": {
-        "@mui/material": "^5.1",
-        "@mui/icons-material": "^5.1",
+        "@mui/material": "^6.4.12",
+        "@mui/icons-material": "^6.4.12",
         "@emotion/react": "^11.9.0",
         "@emotion/styled": "^11.8.1",
-        "@mui/lab": "^5.0.0-alpha.45",
+        "@mui/lab": "^6.0.1-beta.35",
         "@codemirror/state": "^6.0.0",
         "@codemirror/view": "^6.0.0",
         "@codemirror/commands": "^6.0.0",
@@ -29,17 +29,17 @@
         "@codemirror/language": "^6.1.0",
         "@ui-schema/dictionary": "~0.0.13",
         "@ui-schema/ds-material": "~0.4.3",
-        "@ui-schema/kit-codemirror": "~0.2.0",
+        "@ui-schema/kit-codemirror": "^1.0.0-alpha.0",
         "@ui-schema/material-code": "~0.4.7",
         "@ui-schema/ui-schema": "~0.4.7",
         "immutable": "^5.0.0",
-        "react": "^18.0",
-        "react-dom": "^18.0",
+        "react": "^19.0",
+        "react-dom": "^19.0",
         "react-router": "^6.3.0",
         "react-router-dom": "^6.3.0",
         "styled-components": "^5.0.0"
     },
     "devDependencies": {
-        "@types/react": "^18.0"
+        "@types/react": "^19.0"
     }
 }

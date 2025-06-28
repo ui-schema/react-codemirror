@@ -1,4 +1,5 @@
-import React from 'react'
+import { useLayoutEffect, useRef } from 'react'
+import type { RefObject } from 'react'
 import { EditorView, ViewUpdate } from '@codemirror/view'
 import { Compartment, Extension } from '@codemirror/state'
 import { createEditorView, replaceWholeDoc } from '@ui-schema/kit-codemirror/createEditorView'
@@ -7,100 +8,97 @@ export type CodeMirrorOnChange = (view: ViewUpdate, nextValue: string | undefine
 
 export type CodeMirrorOnExternalChange = (editor: EditorView, nextValue: string, prevValue: string) => void
 
-export type CodeMirrorOnViewLifeCycle = (editor: EditorView | undefined, destroyed?: boolean) => void
+export type CodeMirrorOnViewLifeCycle = (editor: EditorView | null, destroyed?: boolean) => void
 
 export const useCodeMirror = (
-    onChange?: CodeMirrorOnChange,
-    // the latest value of the editor in the parent state
-    value: string = '',
-    extensions?: Extension[],
-    // effects to be consumed with next `layoutEffect`
-    // use e.g. `effectsRef.current.splice(0, effectsRef.current.length)`,
-    // to pass them down and remove them - so they won't get run again on next render
-    effects?: ((editor: EditorView) => void)[],
-    // the container, if set must be set from start on, otherwise editor won't behave correctly
-    // if not set, use the `onViewLifecycle` callback to mount the editor yourself
-    containerRef?: { current: HTMLDivElement | null },
-    // handle when `value` has changed from some other instance than this
-    onExternalChange: CodeMirrorOnExternalChange = replaceWholeDoc,
-    // could be called multiple times, every time an editor is re-created, e.g. because of full extensions change
-    // - will receive the previous editor, and `true` if deleted
-    // - is called after setting to state (and if containerRef is set, after mounting to container), but within same render cycle
-    // - is called in cleanup, but before actual destroying the editor (directly afterwards)
-    onViewLifecycle?: CodeMirrorOnViewLifeCycle,
-): EditorView | undefined => {
-    const lastValueRef = React.useRef<string>(value)
-    const onChangeRef = React.useRef<CodeMirrorOnChange | undefined>(undefined)
-    const [editor, setEditor] = React.useState<EditorView | undefined>(undefined)
-    // as onChange relies on the mounting state, this can't be solved with a "normal Compartment style" extension,
-    // these ref hacks should be the safest/fastest option
+    {
+        onChange,
+        value = '',
+        extensions,
+        containerRef,
+        onExternalChange = replaceWholeDoc,
+        onViewLifecycle,
+    }: {
+        onChange?: CodeMirrorOnChange
+        // The latest value of the editor in the parent state.
+        value: string
+        // Extensions to apply. Changes to this array will reconfigure the editor
+        // without destroying and re-creating the entire EditorView instance.
+        // For performance, memoize this array in the parent component.
+        extensions?: Extension[]
+        // The container, if set, must be stable. Changes will recreate the editor.
+        containerRef?: { current: HTMLDivElement | null }
+        // Callback to handle external value changes.
+        onExternalChange?: CodeMirrorOnExternalChange
+        // Callback for editor lifecycle events.
+        onViewLifecycle?: CodeMirrorOnViewLifeCycle
+    },
+): [RefObject<EditorView | null>, Compartment] => {
+    const editorRef = useRef<EditorView | null>(null)
+
+    const onChangeRef = useRef(onChange)
+    const onExternalChangeRef = useRef(onExternalChange)
+    const onViewLifecycleRef = useRef(onViewLifecycle)
     onChangeRef.current = onChange
+    onExternalChangeRef.current = onExternalChange
+    onViewLifecycleRef.current = onViewLifecycle
 
-    const readOnlyCompartment = React.useRef<Compartment>(new Compartment())
+    const lastValueRef = useRef<string>(value)
 
-    React.useLayoutEffect(() => {
-        const editor = createEditorView(
+    const readOnlyCompartment = useRef(new Compartment())
+    const extensionCompartment = useRef(new Compartment())
+
+    useLayoutEffect(() => {
+        const editorView = createEditorView(
             lastValueRef,
             [
-                ...extensions || [],
+                extensionCompartment.current.of(extensions || []),
                 readOnlyCompartment.current.of(EditorView.editable.of(Boolean(onChangeRef.current))),
             ],
             onChangeRef,
         )
 
+        // todo: it could be that this DOM manipulation should happen after all initial extensions where added,
+        //       as `useExtension` relies on the ref from this hook, these plugins are configured after the editor
+        //       is added to DOM, which may be undesirable, needs verification in the future.
         if(containerRef) {
-            containerRef.current?.append(editor.dom)
+            containerRef.current?.append(editorView.dom)
         }
-        setEditor(editor)
-        onViewLifecycle?.(editor)
+        editorRef.current = editorView
+        onViewLifecycleRef.current?.(editorView)
 
         return () => {
-            onViewLifecycle?.(editor, true)
-            editor?.destroy()
-            setEditor(undefined)
+            onViewLifecycleRef.current?.(null, true)
+            editorView?.destroy()
+            editorRef.current = null
         }
-    }, [containerRef, extensions, onViewLifecycle])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [containerRef])
 
-    React.useEffect(() => {
-        if(!editor) return
-        editor.dispatch({
-            effects: readOnlyCompartment.current.reconfigure(EditorView.editable.of(Boolean(onChange))),
+    const editable = Boolean(onChange)
+    useLayoutEffect(() => {
+        editorRef.current?.dispatch({
+            effects: readOnlyCompartment.current.reconfigure(EditorView.editable.of(editable)),
         })
-    }, [editor, onChange])
+    }, [editable])
 
-    //
-    // ! 1. process external changes
-    React.useLayoutEffect(() => {
-        if(!editor) return
+    useLayoutEffect(() => {
+        editorRef.current?.dispatch({
+            effects: extensionCompartment.current.reconfigure(extensions || []),
+        })
+    }, [extensions])
+
+    useLayoutEffect(() => {
         // changes doc when props-value changed - and change was not the last one from within this `CodeMirror`
         // = maybe changes from another user
+        const editor = editorRef.current
+        if(!editor) return
         if(lastValueRef.current !== value) {
-            // todo: really rely on `state.doc`?
-            //       as `lastValueRef.current` may be updated before `editor` has finished consuming the last change,
-            //       building a diff with that "actual-latest" value will produce invalid `changes.from/to` ranges.
-            const textA = editor.state.doc.toString()// lastValueRef.current
-            const textB = value
-            onExternalChange(editor, textB, textA)
-            lastValueRef.current = textB
-        } else {
-            lastValueRef.current = value
+            const previousValue = editor.state.doc.toString()
+            onExternalChangeRef.current(editor, value, previousValue)
+            // note: not updating `lastValueRef` here, as the `updateListener` must act as single source of truth
         }
-    }, [value, editor, onExternalChange, containerRef])
+    }, [value])
 
-    //
-    // ! 2. process own changes
-    //
-    effects = effects?.length === 0 ? undefined : effects // re-execution protection for no-effects with "splice"
-    React.useLayoutEffect(() => {
-        if(!editor && effects) {
-            console.error('received effects but editor is not ready', effects)
-            return
-        }
-        if(!effects || !editor) return
-        effects.forEach(effect => {
-            effect(editor)
-        })
-    }, [effects, editor])
-
-    return editor
+    return [editorRef, extensionCompartment.current] as const
 }

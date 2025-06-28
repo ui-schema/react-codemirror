@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/kit-codemirror",
-    "version": "0.2.0",
+    "version": "1.0.0-alpha.0",
     "description": "CodeMirror v6 as React Component, with hooks and stuff - but only the necessities.",
     "homepage": "https://ui-schema.bemit.codes/docs/kit-codemirror/kit-codemirror",
     "author": {
@@ -45,23 +45,24 @@
         }
     },
     "scripts": {
-        "dtsgen": "tsc -d --emitDeclarationOnly --pretty && merge-dirs build/dts/kit-codemirror/src build && rm -rf build/dts && rm -rf build/**/*.test.*"
+        "dtsgen": "tsc -d --emitDeclarationOnly --pretty && node ../../tools/merge-dirs.js build/dts/kit-codemirror/src build && rm -rf build/dts && rm -rf build/**/*.test.*"
     },
     "sideEffects": false,
     "devDependencies": {
         "@codemirror/state": "^6.0.0",
         "@codemirror/view": "^6.0.0",
-        "@types/react": "^18.0",
-        "react": "^18.0",
-        "react-dom": "^18.0"
+        "@types/react": "^19.0",
+        "react": "^19.0",
+        "react-dom": "^19.0"
     },
     "peerDependencies": {
         "@codemirror/state": "^6.0.0",
         "@codemirror/view": "^6.0.0",
-        "react": "^17.0 || ^18.0",
-        "react-dom": "^17.0 || ^18.0"
+        "react": "^17.0 || ^18.0 || ^19.0",
+        "react-dom": "^17.0 || ^18.0 || ^19.0"
     },
     "publishConfig": {
-        "access": "public"
+        "access": "public",
+        "tag": "next"
     }
 }
