@@ -235,7 +235,7 @@ export default defineConfig([
     {
         files: [
             '**/demo-server/*.{ts,tsx,mjs,js}',
-            'packerConfig.js',
+            'packerConfig.{mjs,js}',
             'jest.config.ts',
         ],
         languageOptions: {

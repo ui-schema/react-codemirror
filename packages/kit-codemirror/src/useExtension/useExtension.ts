@@ -1,13 +1,16 @@
 import { Compartment, Extension, StateEffect } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 import { useLayoutEffect, useRef } from 'react'
-import type { RefObject } from 'react'
+import type { MutableRefObject } from 'react'
+
+type SetupExtension = (() => Extension) | Extension
 
 export const useExtension = (
-    setupExtension: () => Extension,
-    editorRef: RefObject<EditorView | null>,
+    setupExtension: SetupExtension,
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    editorRef: MutableRefObject<EditorView | null>,
 ) => {
-    const configuredRef = useRef<{ view: EditorView, cb: Function } | null>(null)
+    const configuredRef = useRef<{ view: EditorView, cb: SetupExtension } | null>(null)
     const compartmentRef = useRef<Compartment>(new Compartment())
 
     useLayoutEffect(() => {
@@ -25,10 +28,12 @@ export const useExtension = (
             // exists, reconfigure
             // new, append to config
 
+            const extension = typeof setupExtension === 'function' ? setupExtension() : setupExtension
+
             editorRef.current.dispatch({
                 effects: isInitialSetup
-                    ? StateEffect.appendConfig.of(compartment.of(setupExtension()))
-                    : compartment.reconfigure(setupExtension()),
+                    ? StateEffect.appendConfig.of(compartment.of(extension))
+                    : compartment.reconfigure(extension),
             })
             configuredRef.current = {view: editorRef.current, cb: setupExtension}
         } else {

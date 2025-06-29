@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import type { RefObject } from 'react'
+import type { MutableRefObject } from 'react'
 import { EditorView, ViewUpdate } from '@codemirror/view'
 import { Compartment, Extension } from '@codemirror/state'
 import { createEditorView, replaceWholeDoc } from '@ui-schema/kit-codemirror/createEditorView'
@@ -33,7 +33,8 @@ export const useCodeMirror = (
         // Callback for editor lifecycle events.
         onViewLifecycle?: CodeMirrorOnViewLifeCycle
     },
-): [RefObject<EditorView | null>, Compartment] => {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+): [MutableRefObject<EditorView | null>, Compartment] => {
     const editorRef = useRef<EditorView | null>(null)
 
     const onChangeRef = useRef(onChange)

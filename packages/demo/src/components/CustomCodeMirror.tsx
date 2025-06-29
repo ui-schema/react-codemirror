@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import { useCodeMirror } from '@ui-schema/kit-codemirror'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {
     lineNumbers, highlightActiveLineGutter, highlightSpecialChars,
     drawSelection, dropCursor,
@@ -30,9 +30,6 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
         ...props
     },
 ) => {
-    const theme = useEditorTheme(typeof onChange === 'undefined', dense, variant)
-    const highlightStyle = useHighlightStyle()
-
     const extensionsAll: Extension[] = React.useMemo(() => [
         lineNumbers(),
         EditorView.lineWrapping,
@@ -77,23 +74,23 @@ export const CustomCodeMirror: React.FC<CodeMirrorComponentProps & MuiCodeMirror
     })
 
     useExtension(
+        useMemo(() => {
+            return Prec.lowest(EditorView.editorAttributes.of({class: classNameContent || ''}))
+        }, [classNameContent]),
+        editorRef,
+    )
+
+    const highlightStyle = useHighlightStyle()
+    useExtension(
         useCallback(
             () => syntaxHighlighting(highlightStyle || defaultHighlightStyle, {fallback: true}),
             [highlightStyle],
         ),
         editorRef,
     )
+
     useExtension(
-        useCallback(
-            () => theme,
-            [theme],
-        ),
-        editorRef,
-    )
-    useExtension(
-        useCallback(() => {
-            return Prec.lowest(EditorView.editorAttributes.of({class: classNameContent || ''}))
-        }, [classNameContent]),
+        useEditorTheme(typeof onChange === 'undefined', dense, variant),
         editorRef,
     )
 
