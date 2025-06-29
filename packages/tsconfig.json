@@ -27,10 +27,10 @@
                 "kit-codemirror/src/*/index.ts"
             ],
             "@ui-schema/material-code": [
-                "material-code/src"
+                "material-code/src/index.ts"
             ],
             "@ui-schema/material-code/*": [
-                "material-code/src/*"
+                "material-code/src/*/index.ts"
             ]
         }
     },

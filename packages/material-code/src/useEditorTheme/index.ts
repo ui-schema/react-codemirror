@@ -1,1 +1,1 @@
-export * from './useEditorTheme'
+export * from './useEditorTheme.js'

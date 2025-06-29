@@ -1,10 +1,7 @@
 import path from 'path'
 import { packer, webpack } from 'lerna-packer'
-import { babelTargetsLegacyCjsFirst } from 'lerna-packer/packer/babelEsModules.js'
 import {
-    makeModulePackageJson,
     copyRootPackageJson,
-    transformerForLegacyCjsFirst,
 } from 'lerna-packer/packer/modulePackages.js'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -41,40 +38,32 @@ const babelTargetsEsmCjs = [
     },
 ]
 
-/**
- * @todo this shouldn't be needed, or not working or used by TS/node at all,
- *       added for fallbacks for the moment,
- *       it seems for `cjs` fallbacks, `main` can still be used if using `.cjs` extension (like in @codemirror/view),
- *       while the Node.js spec says "`main` can be used as fallback with `type: module`, it will be interpreted as esm (with .js extension)",
- *       - `main` is used for "directory" imports/require, thus wanted to keep it for such legacy projects
- *       - as Node.js with ESM support would use the `exports`, it should be better to go the "main as .cjs" way
- *       - as Node.js with ESM support would use the `exports` in the root directory, the `exports` below will never have any effect when importing the package,
- *         yet it may be used in the built bundle and relative imports inside of it,
- *         which only was observed with jest and ESM,
- *         as `export * from './useExtension/index.js';` in `/index.js` does not follow the `exports` defined in the nested `package.json`,
- *         it should fail if Node.js really uses these nested `package.json`, yet it works correctly,
- *         without `exports` all files are available for imports
- *       - the same `main`/`module` pattern is used in the `package.json` of `kit-codemirror`
- */
-const transformerForEsmCjs = () => {
-    return {
-        sideEffects: false,
-        main: './index.cjs',
-        module: './index.js',
-        /*exports: {
-            types: './index.d.ts',
-            import: './index.js',
-            require: './index.cjs',
-        },*/
-        // this should be enough or even better, to force ESM instead of CJS fallbacks:
-        /*
-        sideEffects: false,
-        type: 'module',
-        main: './index.js',
-        types: './index.d.ts'
-        */
-    }
-}
+const babelTargetsCjsEsm = [
+    {
+        distSuffix: '',
+        args: [
+            '--env-name', 'cjs', '--no-comments', // '--copy-files', '--no-copy-ignored',
+            '--out-file-extension', '.cjs',
+            '--extensions', '.ts', '--extensions', '.tsx', '--extensions', '.js', '--extensions', '.jsx',
+            '--ignore', '**/*.d.ts',
+            '--ignore', '**/*.test.tsx', '--ignore', '**/*.test.ts', '--ignore', '**/*.test.js',
+            '--ignore', '**/*.mock.ts', '--ignore', '**/*.mock.js',
+        ],
+    },
+    {
+        distSuffix: '/esm',
+        // distSuffix: '', // for mjs it would need a distSuffix
+        args: [
+            // '--env-name', 'mjs',
+            // '--out-file-extension', '.mjs',
+            '--no-comments',
+            '--extensions', '.ts', '--extensions', '.tsx', '--extensions', '.js', '--extensions', '.jsx',
+            '--ignore', '**/*.d.ts',
+            '--ignore', '**/*.test.tsx', '--ignore', '**/*.test.ts', '--ignore', '**/*.test.js',
+            '--ignore', '**/*.mock.ts', '--ignore', '**/*.mock.js',
+        ],
+    },
+]
 
 packer({
     apps: {
@@ -113,7 +102,8 @@ packer({
             name: '@ui-schema/material-code',
             root: path.resolve(__dirname, 'packages', 'material-code'),
             entry: path.resolve(__dirname, 'packages', 'material-code/src/'),
-            babelTargets: babelTargetsLegacyCjsFirst,
+            babelTargets: babelTargetsCjsEsm,
+            // babelTargets: babelTargetsLegacyCjsFirst,
         },
     },
 }, __dirname, {
@@ -129,7 +119,8 @@ packer({
     },
     afterEsModules: (packages, pathBuild) => {
         return Promise.all([
-            makeModulePackageJson(transformerForEsmCjs)(packages, pathBuild),
+            // no longer needed for strict ESM
+            // makeModulePackageJson(transformerForEsmCjs)(packages, pathBuild),
             copyRootPackageJson()(packages, pathBuild),
         ]).then(() => undefined)
     },

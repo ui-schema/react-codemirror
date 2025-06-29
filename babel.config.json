@@ -43,6 +43,41 @@
                 ]
             ]
         },
+        "cjs2": {
+            "presets": [
+                "@babel/preset-env",
+                [
+                    "@babel/preset-react",
+                    {
+                        "runtime": "automatic"
+                    }
+                ],
+                "@babel/preset-typescript"
+            ],
+            "plugins": [
+            ]
+        },
+        "mjs": {
+            "presets": [
+                [
+                    "@babel/preset-react",
+                    {
+                        "runtime": "automatic"
+                    }
+                ],
+                "@babel/preset-typescript"
+            ],
+            "plugins": [
+                [
+                    "babel-plugin-replace-import-extension",
+                    {
+                        "extMapping": {
+                            ".js": ".mjs"
+                        }
+                    }
+                ]
+            ]
+        },
         "test": {
             "presets": [
                 "@babel/preset-env",
@@ -61,7 +96,7 @@
                     "@babel/preset-env",
                     {
                         "targets": {
-                            "node": "18"
+                            "node": "20"
                         },
                         "modules": false
                     }
@@ -70,7 +105,7 @@
                     "@babel/preset-typescript",
                     {
                         "targets": {
-                            "node": "18"
+                            "node": "20"
                         },
                         "modules": false
                     }

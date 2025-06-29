@@ -1,1 +1,1 @@
-export * from './useHighlightStyle'
+export * from './useHighlightStyle.js'

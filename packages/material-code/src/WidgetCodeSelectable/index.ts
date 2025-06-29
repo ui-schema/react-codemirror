@@ -1,1 +1,1 @@
-export * from './WidgetCodeSelectable'
+export * from './WidgetCodeSelectable.js'

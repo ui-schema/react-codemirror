@@ -1,1 +1,1 @@
-export * from './CodeBar'
+export * from './CodeBar.js'

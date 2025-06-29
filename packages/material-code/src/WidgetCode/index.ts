@@ -1,1 +1,1 @@
-export * from './WidgetCode'
+export * from './WidgetCode.js'
