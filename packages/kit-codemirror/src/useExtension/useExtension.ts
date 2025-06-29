@@ -1,13 +1,14 @@
 import { Compartment, Extension, StateEffect } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
 import { useLayoutEffect, useRef } from 'react'
-import type { RefObject } from 'react'
+import type { MutableRefObject } from 'react'
 
 type SetupExtension = (() => Extension) | Extension
 
 export const useExtension = (
     setupExtension: SetupExtension,
-    editorRef: RefObject<EditorView | null>,
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    editorRef: MutableRefObject<EditorView | null>,
 ) => {
     const configuredRef = useRef<{ view: EditorView, cb: SetupExtension } | null>(null)
     const compartmentRef = useRef<Compartment>(new Compartment())
