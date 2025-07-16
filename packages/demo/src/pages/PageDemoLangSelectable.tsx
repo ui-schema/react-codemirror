@@ -4,7 +4,11 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { Nav } from '../components/Nav'
 import Link from '@mui/material/Link'
-import { createOrderedMap, createStore, injectPluginStack, JsonSchema, onChangeHandler, storeUpdater, UIStoreProvider } from '@ui-schema/ui-schema'
+import { UIStoreProvider, createStore } from '@ui-schema/react/UIStore'
+import { storeUpdater } from '@ui-schema/react/storeUpdater'
+import { onChangeHandler } from '@ui-schema/react'
+import { WidgetEngine } from '@ui-schema/react/WidgetEngine'
+import { createOrderedMap } from '@ui-schema/ui-schema/createMap'
 import { GridContainer } from '@ui-schema/ds-material/GridContainer'
 import { OrderedMap } from 'immutable'
 import { SchemaDebug } from '../components/SchemaDebug'
@@ -61,9 +65,8 @@ const schema = createOrderedMap({
             readOnly: true,
         },
     },
-} as JsonSchema)
+})
 
-const GridStack = injectPluginStack(GridContainer)
 const DemoComponent = () => {
     const showValidity = true
     const [store, setStore] = React.useState(() => createStore(OrderedMap({
@@ -81,11 +84,12 @@ const DemoComponent = () => {
             onChange={onChange}
             showValidity={showValidity}
         >
-            <GridStack
-                schema={schema}
-                showValidity={showValidity}
-                isRoot
-            />
+            <GridContainer>
+                <WidgetEngine
+                    schema={schema}
+                    isRoot
+                />
+            </GridContainer>
             <Box mt={2}>
                 <Typography variant={'subtitle1'} gutterBottom>Store & Schema Debug</Typography>
                 <SchemaDebug schema={schema}/>

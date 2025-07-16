@@ -1,13 +1,13 @@
-import { isRemoteChange } from '@ui-schema/kit-codemirror/isRemoteChange'
 import React from 'react'
-import { StoreKeyType, WithScalarValue } from '@ui-schema/ui-schema/UIStore'
-import { WidgetProps } from '@ui-schema/ui-schema/Widget'
-import { TransTitle } from '@ui-schema/ui-schema/Translate/TransTitle'
-import { Trans } from '@ui-schema/ui-schema/Translate/Trans'
+import { isRemoteChange } from '@ui-schema/kit-codemirror/isRemoteChange'
 import { CodeMirrorOnChange } from '@ui-schema/kit-codemirror/useCodeMirror'
 import { WidgetCodeProps } from '@ui-schema/material-code/WidgetCode'
 import MenuItem from '@mui/material/MenuItem'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import { StoreKeyType } from '@ui-schema/ui-schema/ValueStore'
+import { WidgetProps } from '@ui-schema/react/Widget'
+import { TranslateTitle } from '@ui-schema/react/TranslateTitle'
+import { Translate } from '@ui-schema/react/Translate'
 import { List } from 'immutable'
 import { CodeBar, CodeBarProps } from '@ui-schema/material-code/CodeBar'
 import Box from '@mui/material/Box'
@@ -19,11 +19,11 @@ export interface WidgetCodeSelectProps {
     formatKey: StoreKeyType
     valueKey: StoreKeyType
     selectSize?: 'small' | 'medium'
-    CodeBar?: React.FC<CodeBarProps>
+    CodeBar?: React.ComponentType<CodeBarProps>
     onChangeFormat?: (format: string) => void
 }
 
-export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarValue & Omit<WidgetCodeProps, 'barBegin'> & WidgetCodeSelectProps> = (
+export const WidgetCodeSelectable: React.ComponentType<WidgetProps & Omit<WidgetCodeProps, 'barBegin'> & WidgetCodeSelectProps> = (
     {
         storeKeys, schema, value, onChange,
         valid, required, errors, showValidity,
@@ -84,7 +84,7 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
         {hideTitle ? null :
             <Box mb={0.5}>
                 <FormLabel error={(!valid && showValidity)}>
-                    <TransTitle storeKeys={storeKeys} schema={schema}/>
+                    <TranslateTitle storeKeys={storeKeys} schema={schema}/>
                     {required ? ' *' : null}
                 </FormLabel>
             </Box>}
@@ -111,7 +111,7 @@ export const WidgetCodeSelectable: React.ComponentType<WidgetProps & WithScalarV
                     {(schema?.get('format') as List<string>)?.map(
                         f =>
                             <MenuItem key={f} value={f} dense>
-                                <Trans text={'formats.' + f} fallback={f}/>
+                                <Translate text={'formats.' + f} fallback={f}/>
                             </MenuItem>,
                     )}
                 </Select>
