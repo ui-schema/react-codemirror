@@ -8,7 +8,7 @@ CodeMirror v6 integration for React, with MUI widgets for [UI-Schema](https://gi
 
 [![Github actions Build](https://github.com/ui-schema/react-codemirror/actions/workflows/blank.yml/badge.svg)](https://github.com/ui-schema/react-codemirror/actions)
 [![react compatibility](https://img.shields.io/badge/React-%3E%3D17-success?style=flat-square&logo=react)](https://reactjs.org/)
-[![MIT license](https://img.shields.io/npm/l/@ui-schema/ui-schema?style=flat-square)](https://github.com/ui-schema/ui-schema/blob/master/LICENSE)
+[![MIT license](https://img.shields.io/npm/l/@ui-schema/ui-schema?style=flat-square)](https://github.com/ui-schema/react-codemirror/blob/main/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 ![Typed](https://flat.badgen.net/badge/icon/Typed?icon=typescript&label&labelColor=blue&color=555555)
 

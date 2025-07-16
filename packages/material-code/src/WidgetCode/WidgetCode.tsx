@@ -1,9 +1,8 @@
 import { isRemoteChange } from '@ui-schema/kit-codemirror/isRemoteChange'
 import React from 'react'
-import { WithScalarValue } from '@ui-schema/ui-schema/UIStore'
-import { WidgetProps } from '@ui-schema/ui-schema/Widget'
-import { TransTitle } from '@ui-schema/ui-schema/Translate/TransTitle'
-import { Trans } from '@ui-schema/ui-schema/Translate/Trans'
+import { WidgetProps } from '@ui-schema/react/Widget'
+import { TranslateTitle } from '@ui-schema/react/TranslateTitle'
+import { Translate } from '@ui-schema/react/Translate'
 import { CodeMirrorComponentProps } from '@ui-schema/kit-codemirror/CodeMirror'
 import { CodeMirrorOnChange } from '@ui-schema/kit-codemirror/useCodeMirror'
 import { Extension } from '@codemirror/state'
@@ -29,7 +28,7 @@ export interface WidgetCodeProps {
     readOnly?: boolean
 }
 
-export const WidgetCode: React.ComponentType<WidgetProps & WithScalarValue & WidgetCodeProps> = (
+export const WidgetCode: React.ComponentType<WidgetProps & WidgetCodeProps> = (
     {
         storeKeys, schema, value, onChange,
         valid, required, errors, showValidity,
@@ -73,12 +72,12 @@ export const WidgetCode: React.ComponentType<WidgetProps & WithScalarValue & Wid
             <Box mb={0.5}>
                 <FormLabel error={(!valid && showValidity)}>
                     {hideTitle ? null : <>
-                        <TransTitle storeKeys={storeKeys} schema={schema}/>
+                        <TranslateTitle storeKeys={storeKeys} schema={schema}/>
                         {required ? ' *' : null}
                     </>}
                     {formatValue ? <>
                         {hideTitle ? null : ' ('}
-                        <Trans text={'formats.' + formatValue} fallback={formatValue}/>
+                        <Translate text={'formats.' + formatValue} fallback={formatValue}/>
                         {hideTitle ? null : ')'}
                     </> : null}
                 </FormLabel>

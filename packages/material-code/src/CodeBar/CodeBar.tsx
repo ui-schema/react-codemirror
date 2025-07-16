@@ -1,9 +1,9 @@
 import React from 'react'
-import { StoreSchemaType } from '@ui-schema/ui-schema/CommonTypings'
+import { SomeSchema } from '@ui-schema/ui-schema/CommonTypings'
 import Box from '@mui/material/Box'
 
 export interface CodeBarProps {
-    schema: StoreSchemaType
+    schema: SomeSchema
     barBegin?: React.ReactElement
     barContent?: React.ReactElement
     barEnd?: React.ReactElement

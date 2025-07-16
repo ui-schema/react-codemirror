@@ -1,12 +1,12 @@
-import { useUIStore } from '@ui-schema/ui-schema/UIStore'
+import { useUIStore } from '@ui-schema/react/UIStore'
 import React from 'react'
-import { StoreSchemaType } from '@ui-schema/ui-schema'
+import { SomeSchema } from '@ui-schema/ui-schema'
 import { CustomCodeMirror } from './CustomCodeMirror'
 import { json } from '@codemirror/lang-json'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 
-export const SchemaDebug: React.FC<{ schema: StoreSchemaType }> = ({schema}) => {
+export const SchemaDebug: React.FC<{ schema: SomeSchema }> = ({schema}) => {
     const {store} = useUIStore()
     const extensions = React.useMemo(() => [
         json(),
