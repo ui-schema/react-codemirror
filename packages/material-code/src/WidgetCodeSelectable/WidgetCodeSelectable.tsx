@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { isRemoteChange } from '@ui-schema/kit-codemirror/isRemoteChange'
 import { CodeMirrorOnChange } from '@ui-schema/kit-codemirror/useCodeMirror'
 import { WidgetCodeProps } from '@ui-schema/material-code/WidgetCode'

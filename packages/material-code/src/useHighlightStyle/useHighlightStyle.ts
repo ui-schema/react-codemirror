@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { tags } from '@lezer/highlight'
 import { HighlightStyle } from '@codemirror/language'
 import { useTheme } from '@mui/material/styles'

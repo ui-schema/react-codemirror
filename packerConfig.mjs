@@ -117,12 +117,36 @@ packer({
             '@emotion',
         ],
     },
-    afterEsModules: (packages, pathBuild) => {
+    afterEsModules: (packages, pathBuild, isServing) => {
+        if(isServing) return
         return Promise.all([
-            // no longer needed for strict ESM
-            // makeModulePackageJson(transformerForEsmCjs)(packages, pathBuild),
-            copyRootPackageJson()(packages, pathBuild),
-        ]).then(() => undefined)
+            copyRootPackageJson(({packageJson, package: packageId}) => {
+                packageJson = {...packageJson}
+                if(packageId === 'kitCode') {
+                    // for this package we need `type: module`, as `@codemirror` has it defined,
+                    // which makes it less backwards compatible than other ui-schema packages.
+                    // without `type`, it produces TS issues:
+                    //
+                    // TS2345: Argument of type
+                    // import('node_modules/@codemirror/state/dist/index').AnnotationType<boolean>
+                    // is not assignable to parameter of type
+                    // import('node_modules/@codemirror/state/dist/index').AnnotationType<boolean>
+                    // The types returned by of(...) are incompatible between these types.
+                    // Type
+                    // import('node_modules/@codemirror/state/dist/index').Annotation<boolean>
+                    // is not assignable to type
+                    // import('node_modules/@codemirror/state/dist/index').Annotation<boolean>
+                    // . Two different types with this name exist, but they are unrelated.
+                    // Types have separate declarations of a private property _isAnnotation
+                } else {
+                    delete packageJson.type
+                }
+                return packageJson
+            })(packages, pathBuild),
+        ]).then(() => undefined).catch((e) => {
+            console.error('ERROR after-es-mod', e)
+            return Promise.reject(e)
+        })
     },
 })
     .then(([execs, elapsed]) => {
