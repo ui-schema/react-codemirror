@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/kit-codemirror",
-    "version": "1.0.0-alpha.1",
+    "version": "1.0.0-alpha.2",
     "description": "CodeMirror v6 as React Component, with hooks and stuff - but only the necessities.",
     "author": {
         "name": "bemit",
@@ -41,7 +41,8 @@
             "types": "./*/index.d.ts",
             "import": "./*/index.js",
             "require": "./*/index.cjs"
-        }
+        },
+        "./package.json": "./package.json"
     },
     "scripts": {
         "dtsgen": "tsc -d --emitDeclarationOnly --pretty && node ../../tools/merge-dirs.js build/dts/kit-codemirror/src build && rm -rf build/dts && rm -rf build/**/*.test.*"

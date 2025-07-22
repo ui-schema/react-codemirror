@@ -3,6 +3,9 @@ contact_links:
     -   name: UI-Schema Discord
         url: https://discord.gg/MAjgpwnm36
         about: Ask questions and discuss in our Discord Community
+    -   name: UI-Schema Core/Engine GitHub
+        url: https://github.com/ui-schema/ui-schema
+        about: "For questions and documentation of the core @ui-schema project."
     -   name: CodeMirror GitHub
         url: https://github.com/codemirror
         about: "More about the underlying editor framework."
