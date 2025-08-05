@@ -5,8 +5,9 @@ import { schemaPluginsAdapterBuilder } from '@ui-schema/react/SchemaPluginsAdapt
 import { StoreKeyType } from '@ui-schema/ui-schema/ValueStore'
 import { Map } from 'immutable'
 import React from 'react'
-import { baseComponents, typeWidgets } from '@ui-schema/ds-material/BindingDefault'
-import { bindingExtended } from '@ui-schema/ds-material/BindingExtended'
+import { bindingComponents } from '@ui-schema/ds-material/Binding/Components'
+import { widgetsDefault } from '@ui-schema/ds-material/Binding/WidgetsDefault'
+import { widgetsExtended } from '@ui-schema/ds-material/Binding/WidgetsExtended'
 import { SchemaGridHandler } from '@ui-schema/ds-material/Grid'
 import Button from '@mui/material/Button'
 import { json } from '@codemirror/lang-json'
@@ -94,12 +95,12 @@ const CustomWidgetCodeSelectable: React.ComponentType<WidgetProps> = (
 }
 
 export const customBinding: MuiBinding = {
-    ...baseComponents,
+    ...bindingComponents,
 
     // Widget mapping by schema type or custom ID.
     widgets: {
-        ...typeWidgets,
-        ...bindingExtended,
+        ...widgetsDefault,
+        ...widgetsExtended,
 
         Code: CustomWidgetCode,
         CodeSelectable: CustomWidgetCodeSelectable,

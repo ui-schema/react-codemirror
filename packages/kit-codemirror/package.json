@@ -1,17 +1,8 @@
 {
     "name": "@ui-schema/kit-codemirror",
-    "version": "1.0.0-alpha.2",
+    "version": "1.0.0-alpha.3",
     "description": "CodeMirror v6 as React Component, with hooks and stuff - but only the necessities.",
-    "author": {
-        "name": "bemit",
-        "url": "https://bemit.codes"
-    },
-    "contributors": [
-        {
-            "name": "Michael Becker",
-            "url": "https://i-am-digital.eu"
-        }
-    ],
+    "author": "Michael Becker <michael@bemit.codes> (https://bemit.codes)",
     "license": "MIT",
     "keywords": [
         "codemirror",
@@ -19,6 +10,7 @@
         "react-component",
         "react"
     ],
+    "homepage": "https://github.com/ui-schema/react-codemirror/tree/main/packages/kit-codemirror",
     "repository": {
         "type": "git",
         "url": "https://github.com/ui-schema/react-codemirror.git",

@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button'
-import { isRemoteChange } from '@ui-schema/kit-codemirror'
+import { isRemoteChange } from '@ui-schema/kit-codemirror/isRemoteChange'
 import React from 'react'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
