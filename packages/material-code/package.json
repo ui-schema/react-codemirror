@@ -1,6 +1,6 @@
 {
     "name": "@ui-schema/material-code",
-    "version": "0.5.0-alpha.3",
+    "version": "0.5.0-alpha.4",
     "description": "Code editor widgets using CodeMirror, with Material-UI styling for UI-Schema",
     "author": "Michael Becker <michael@bemit.codes> (https://bemit.codes)",
     "license": "MIT",
