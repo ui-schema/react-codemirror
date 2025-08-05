@@ -1,3 +1,4 @@
+import { isRemoteChange } from '@ui-schema/kit-codemirror/isRemoteChange'
 import React from 'react'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
@@ -129,8 +130,8 @@ const DemoComponentReadOnly = () => {
     const [readOnly, setReadOnly] = React.useState(false)
     const [value, setValue] = React.useState('')
 
-    const onChange: CodeMirrorOnChange = React.useCallback((editor, newValue) => {
-        if(!editor.docChanged || typeof newValue !== 'string') {
+    const onChange: CodeMirrorOnChange = React.useCallback((update, newValue) => {
+        if(!update.docChanged || typeof newValue !== 'string' || isRemoteChange(update)) {
             return
         }
         setValue(newValue)
